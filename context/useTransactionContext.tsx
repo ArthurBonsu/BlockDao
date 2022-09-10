@@ -19,7 +19,7 @@ const useTransactionContext = () => {
 };
 
 // Provides transaction information here 
-const TransactionsProvider = ({ children }) => {
+
   const [formData, setformData] = useState({ addressTo: "", amount: "", keyword: "", message: "" });
   const [currentAccount, setCurrentAccount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +30,11 @@ const TransactionsProvider = ({ children }) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
   };
 
+  // Connecting to the Smart Contract
+  // Pull transaction
+  // Using options 1
+  // Using Option 2 for Etherscan
+  
  const getAllTransactions = async () => {
     try {
       if (ethereum) {
@@ -161,6 +166,6 @@ const TransactionsProvider = ({ children }) => {
         formData,
       }
 }
-}
+
 
     export default useTransactionContext;

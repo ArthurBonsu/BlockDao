@@ -37,6 +37,17 @@ export interface SwapTokenTransaction{
   txdata?: string
 }
 
+export interface SwapNewTokenTransaction{
+  tokenAname:string
+  symbolA:string
+  tokenBname: string
+  symbolB: string
+  amount: number 
+  newamount: string 
+  swaphash: string 
+  from: string 
+  to: string  
+}
 
 
 

@@ -127,9 +127,17 @@ const {
     let provider = new ethers.providers.InfuraProvider('ropsten');
 
        console.log("This is my provider" + provider);
-      
+      // also known as signer or provider.getSigner()
        walletsigner = await new  ethers.Wallet.fromMnemonic(String(process.env.MNEMONIC)) 
+       // signer is thethe signer address not signer
+
+       //  also known as provider.signer(0)
        signer =  walletsigner.address;
+       // the wallet activated becomes the account
+       // Web3 joins the two together( the wallet(signer) and the provider)
+       // the active userthat can send the transaction, has the signer and the connection 
+
+   
        account = await  walletsigner.connect(provider);
        console.log(" account is the account here" + account)
        console.log("This is my signer" + signer);

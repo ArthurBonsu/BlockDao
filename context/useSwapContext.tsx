@@ -1,30 +1,71 @@
 import React, { useEffect, useState } from "react";
-import { ethers } from "ethers";
+import { ContractFactory, ethers, Signer, BigNumber,Contract } from "ethers";
 
 import { contractABI, contractAddress } from "../constants/constants";
-
-
-
+import { SwapNewTokenTransaction  } from 'types/ethers'
+const chai  = require("chai");
+const BN =require('bn.js')
+chai.use(require('chai-bn')(BN));
+const chaiaspromised = require("chai-as-promised");
+const { Wallet } = require("ethers");
 const { ethereum } = window;
+require("@nomiclabs/hardhat-web3")
 
 
-const useTransactionContext = () => {
+interface SwapProp{
+
+  tokenAname: string,
+  symbolA:string, 
+  tokenBname:string,
+  symbolB:string,
+  amount:number,
+  newamount: string  
+}
+
+
+interface sendTransactionProp {
+ signer: Signer 
+ accounts: string[]
+ transactionObject:SwapNewTokenTransaction
+
+}
+
+const useSwapContext = () => {
+
+
     
  const createEthereumContract = () => {
+  // Also like passing API key to infura this is normally done for wallet cases and things that work like Infura
   const provider = new ethers.providers.Web3Provider(ethereum);
+   
+  // is it calling this thhing Wallet now (since API is passed)
+  //FOR SIGNERS
   const signer = provider.getSigner();
-  const swapContract = new ethers.Contract(contractAddress, contractABI, signer);
+    
+  // And making the signer the active we can retrieve the address inside
+  let thisaccount = signer.connect(provider);
+  thisaccount.getAddress();
 
+  // WE USE THE REQUEST PROCESS
+
+
+
+  const swapContract: Contract = new ethers.Contract(contractAddress, contractABI, signer);
+  swapContract.connect().
   return swapContract;
 };
 
+  let accounts:Array<string> 
 // Provides transaction information here 
 // Picking these values from the form 
-  const [formData, setformData] = useState({ firsttoken: "", secondtoken: "",  amount: "", newamount: ""  });
+  const [formData, setformData] = useState({ tokenAname: "", symbolA: "",  tokenBname: "", symbolB: "", amount: 0, newamount: 0  });
   const [currentAccount, setCurrentAccount] = useState("");
+  const [accountsretrieved, setAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [amount, setTokenAmount] = useState(localStorage.getItem("Tokenamount"));
+  const [amount, setTokenAmount] = useState(localStorage.getItem("TokenSwapAmount"));
   const [swaptransactions, setSwapTransactions] = useState([]);
+  const [transactioninfocase, setTransactionInfo] = useState({})
+ 
 
   const handleChange = (e, name) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
@@ -35,25 +76,34 @@ const useTransactionContext = () => {
   // Using options 1
   // Using Option 2 for Etherscan
   
- const getAllTransactions = async () => {
+ const swapTKA = async ({ tokenAname, symbolA, tokenBname, symbolB, amount, newamount }: SwapProp) => {
     try {
       if (ethereum) {
         const newSwapContract = createEthereumContract();
+        const amountoftokens =  ethers.BigNumber.from(amount);
+     
+        console.log("This is the amount of tokens",amountoftokens );
+ 
+        const newswaptransaction  = await newSwapContract.swapTKA(amountoftokens) ;
+        const newtransaction =        newswaptransaction.wait()
+        setSwapTransactions(newswaptransaction);
+        
 
-        const availableTransactions = await transactionsContract.getAllTransactions();
+       const transactioninfo : SwapNewTokenTransaction = {
+        tokenAname:tokenAname,
+        symbolA:symbolA,
+        tokenBname: tokenBname,
+        symbolB: symbolB,
+        amount: amount, 
+        newamount: newamount ,
+         swaphash: newtransaction.hash ,
+        from: accounts[0] ,
+        to: newtransaction.to 
+       }
 
-        const structuredTransactions = availableTransactions.map((transaction) => ({
-          addressTo: transaction.receiver,
-          addressFrom: transaction.sender,
-          timestamp: new Date(transaction.timestamp.toNumber() * 1000).toLocaleString(),
-          message: transaction.message,
-          keyword: transaction.keyword,
-          amount: parseInt(transaction.amount._hex) / (10 ** 18)
-        }));
-
-        console.log(structuredTransactions);
-
-        setTransactions(structuredTransactions);
+      setTransactionInfo(transactioninfo);
+      
+     sendTransaction(transactioninfo)
       } else {
         console.log("Ethereum is not present");
       }
@@ -62,16 +112,56 @@ const useTransactionContext = () => {
     }
   };
 
+  const swapTKX = async ({ tokenAname, symbolA, tokenBname, symbolB, amount, newamount }: SwapProp) => {
+   
+    try {
+      if (ethereum) {
+        const newSwapContract = createEthereumContract();
+      
+       
+        // passing in value here
+        const amountoftokens =  ethers.BigNumber.from(amount);
+     
+        console.log("This is the amount of tokens",amountoftokens );
+        const newswapTKAtransaction = await newSwapContract.swapTKA(amountoftokens) ;
+          newswapTKAtransaction.wait()
+          console.log ("Swap Transaction", newswapTKAtransaction);
+
+
+          console.log ('new TKA Transaction hash' +  await newswapTKAtransaction.hash);
+        setSwapTransactions(newswapTKAtransaction);
+        const transactioninfo : SwapNewTokenTransaction = {
+          tokenAname:tokenAname,
+          symbolA:symbolA,
+          tokenBname: tokenBname,
+          symbolB: symbolB,
+          amount: amount, 
+          newamount: newamount ,
+          swaphash: newswapTKAtransaction.hash ,
+          from: accounts[0] ,
+          to: newswapTKAtransaction.to 
+         }
+  
+        setTransactionInfo(transactioninfo);
+      } else {
+        console.log("Ethereum is not present");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   const checkIfWalletIsConnect = async () => {
     try {
       if (!ethereum) return alert("Please install MetaMask.");
 
-      const accounts = await ethereum.request({ method: "eth_accounts" });
-
+      accounts = await ethereum.request({ method: "eth_accounts" });
+     
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
 
-        getAllTransactions();
+        useSwapContext();
       } else {
         console.log("No accounts found");
       }
@@ -83,10 +173,12 @@ const useTransactionContext = () => {
    const checkIfTransactionsExists = async () => {
     try {
       if (ethereum) {
-        const transactionsContract = createEthereumContract();
-        const currentTransactionCount = await transactionsContract.getTransactionCount();
+        const swapTokenContracts = createEthereumContract();
+        const swapContractCount = await swapTokenContracts.getTransactionCount();
 
-        window.localStorage.setItem("transactionCount", currentTransactionCount);
+        // transaction confirmation to know transaction signature
+
+        window.localStorage.setItem("transactionCount", swapContractCount);
       }
     } catch (error) {
       console.log(error);
@@ -99,8 +191,10 @@ const useTransactionContext = () => {
     try {
       if (!ethereum) return alert("Please install MetaMask.");
 
-      const accounts = await ethereum.request({ method: "eth_requestAccounts", });
-
+        // the blockchain accounts here
+     let  accounts = await ethereum.request({ method: "eth_requestAccounts", });
+        accounts[0].sendTransaction()
+      // the specific account
       setCurrentAccount(accounts[0]);
       window.location.reload();
     } catch (error) {
@@ -110,30 +204,14 @@ const useTransactionContext = () => {
     }
   };
 
-  const sendTransaction = async () => {
+  const sendTransaction = async ({signer, transactionObject } :sendTransactionProp) => {
     try {
-      if (ethereum) {
-        const { addressTo, amount, keyword, message } = formData;
-        const transactionsContract = createEthereumContract();
-        const parsedAmount = ethers.utils.parseEther(amount);
-
-        await ethereum.request({
-          method: "eth_sendTransaction",
-          params: [{
-            from: currentAccount,
-            to: addressTo,
-            gas: "0x5208",
-            value: parsedAmount._hex,
-          }],
-        });
-
-        const transactionHash = await transactionsContract.addToBlockchain(addressTo, parsedAmount, message, keyword);
-
-        setIsLoading(true);
-        console.log(`Loading - ${transactionHash.hash}`);
-        await transactionHash.wait();
-        console.log(`Success - ${transactionHash.hash}`);
-        setIsLoading(false);
+      if (ethereum) {     
+      
+      //  const parsedAmount = ethers.utils.parseEther(amount);
+       // WE WILL NOT BE WORKING WITH PAYMENT PER SAY BUT JUST SIMPLE TOKEN SUBMISSION
+    
+     
 
         const transactionsCount = await transactionsContract.getTransactionCount();
 
@@ -148,6 +226,7 @@ const useTransactionContext = () => {
       throw new Error("No ethereum object");
     }
   };
+
 
   useEffect(() => {
     checkIfWalletIsConnect();
@@ -168,4 +247,4 @@ const useTransactionContext = () => {
 }
 
 
-    export default useTransactionContext;
+    export default useSwapContext;

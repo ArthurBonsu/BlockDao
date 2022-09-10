@@ -460,7 +460,7 @@ export default useSafe
       <Text {...disclosureProps} mt={4}>
 
       `These are the details of Transaction Here`
-      `Amount:   ${amount} string text`
+      `Amount:   ${amount} `
       `Transaction Hash ${tokentxhash} `
       `Token Name:  ${tokenname}`
       `Symbol:  ${symbol} `

@@ -44,7 +44,7 @@ import logo from '../images/blockdaologo.png'
     const [isRegisteration, setIsRegistration] = useState(false)
     const [isTransaction, setIsTransaction] = useState(false)
     const [isSwapping, setIsSwapping] =  useState(false)
-   
+    const address = useEthersStore((state) => state.address)
    
   const {push} = useRouter()
 
@@ -57,6 +57,7 @@ const handleSignOut =async () => {
  <Flex color='white'>
 <Center w='100px' bg='green.500'>
 <HStack spacing='24px'>
+
 
 {session ? (
 <>
@@ -74,9 +75,6 @@ const handleSignOut =async () => {
     <Transaction />
     <Footer />                         
 </div>
-
-
-
 </>
 ) : (
 <>
