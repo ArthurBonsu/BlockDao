@@ -66,7 +66,8 @@ const useSwapContext = () => {
 
  const [origamount, setTokenAmount] = useState(0);  
  const [newtokenamount, setNewTokenAmount] = useState(0);
-  const [transactions, setSwapTransactions] = useState({});
+  const [transactions, setSwapTransactions] = useState({tokenAname:"",symbolA:"", tokenBname:"",symbolB:"",amount:0,newamount:0, swaphash: "",from: "",to:"" });
+ 
   const [transactioninfocase, setTransactionInfo] = useState({})
   const [transactionCount, setTransactionCount] = useState(0)
  

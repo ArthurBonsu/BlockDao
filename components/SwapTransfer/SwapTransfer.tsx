@@ -5,7 +5,8 @@ const hre = require("hardhat")
 import { Button, ButtonProps, Flex, useDisclosure, AlertDialog,Alert,  AlertDialogBody,  AlertDialogCloseButton,  AlertDialogContent,
   AlertDialogFooter,  AlertDialogHeader,  AlertDialogOverlay,   UseDisclosureReturn, Select,FormErrorMessage, FormControl, FormLabel,
   NumberInput,NumberInputField, NumberIncrementStepper,NumberDecrementStepper,NumberInputStepper, Input,IconButton, AlertIcon, Grid,
-  Box,  Text,  InputGroup,  InputRightAddon, FormHelperText
+    Box,  Text,  InputGroup,  InputRightAddon, FormHelperText,Wrap,  WrapItem, VisuallyHidden, VisuallyHiddenInput, Accordion,AccordionItem,AccordionButton,
+    AccordionPanel, AccordionIcon
 
 } from '@chakra-ui/react'
 import {RiArrowDownSLine} from 'react-icons/all'
@@ -88,9 +89,9 @@ interface SwapCardServiceProps{
   
 ]
 
-
-  
-const SwapTransactionCard = ({ color, title, icon , subtitle }) => (
+// THE BEAUTIFUL DYNAMIC VIEW HERE CAN BE USED FOR OTHER NAVIGATION VIEW, RIGHT NOW WWE WANT ONLY ONE CARD
+  /*
+const TransactionDisplay = ({ color, title, icon , subtitle }) => (
   <div className="flex flex-row justify-start items-start white-glassmorphism p-3 m-2 cursor-pointer hover:shadow-xl">
     <div className={`w-10 h-10 rounded-full flex justify-center items-center ${color}`}>
       {icon}
@@ -150,8 +151,70 @@ const SwapTransferService: React.FC<SwapCardServiceProps> = ({
   
 );
     }
+*/
 
- const createTransferSwap:  React.FC<CreateSwapTransferInput> = ( {tokenAname, symbolA,tokenBname,symbolB, amount} :CreateSwapTransferInput) => {
+const {  swapTKA ,swapTKX,transactionCount,connectWallet,transactions,currentAccount,sendTransaction,handleChange,
+  formData,accountsretrieved,origamount,newtokenamount} = useSwapContext();
+const TransactionDisplay = ({ account, tokenAname, symbolA, tokenBname , symbolB,  amount,newamount, swaphash,from, to  }) => {
+  return (
+<Stack spacing={6}>
+    <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
+    <Heading as='h1' size='4xl' noOfLines={1}> View Transactions From user:  {account}   </Heading>
+   <>
+  <Text as='b'>First Token </Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  
+  <Text as='i'>SYMB A</Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <Text as='u'>Second Token</Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <Text as='abbr'>SYMB B</Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <Text as='cite'>Amount</Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <Text as='del'>New Amount</Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <Text as='em'>Transaction Hash</Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <Text as='ins'>From Address</Text>
+  <br />
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <Text as='kbd'>To</Text>
+  <Button colorScheme='teal' variant='solid'>
+    Button
+  </Button>
+  <br />
+  
+</>
+</Box>
+    </Stack>
+  )
+}
+
+const createTransferSwap:  React.FC<CreateSwapTransferInput> = ( {tokenAname, symbolA,tokenBname,symbolB, amount} :CreateSwapTransferInput) => {
 
   // getting address and state of address
   const address = useEthersStore((state) => state.address)
@@ -201,7 +264,7 @@ const [token, setToken] = useState({})
 const [value, setValue] = useState('')
 const [_currentAccount, setCurrentAccount] = useState('')
 const [tokenchosen, setTokenChosen] = useState(false);
-
+const [isSubmitted, setIsSubmitted] = useState(false);
     /*
 const schema = yup.object({
   symbol: yup.string().required(),
@@ -257,39 +320,24 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
 
    setIsLoading(true)
 
-   const {  swapTKA ,swapTKX,transactionCount,connectWallet,transactions,currentAccount,sendTransaction,handleChange,
-    formData,accountsretrieved,origamount,newtokenamount} = useSwapContext();
-   connectWallet(); 
-  setCurrentAccount(currentAccount);
-     console.log('Current Account' + currentAccount);
-   
-  
-    
-   const ChooseTokenType=() =>{
-    if(!tokenchosen){
-      setTokenChosen(true); 
-    }
-    else {
-      setTokenChosen(false);
-    }
-   
+
+       connectWallet(); 
+     setCurrentAccount(currentAccount);
+     console.log('Current Account' + currentAccount); 
     
      if(!tokenchosen){
       setIsLoading(true);
       swapTKA(amount);
      setIsLoading(false)
-     return { origamount, newtokenamount}; 
-    }
-    else{
-
+  
+       }
+      else{
       setIsLoading(true);
       swapTKX(amount);
-        setIsLoading(false);
+        setIsLoading(false);           
+    
+      }
   
-           return { origamount, newtokenamount}; 
-   
-          }
-  }
 
 //getransaction
 
@@ -375,8 +423,6 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
             </FormHelperText>
           )}
         </FormControl>
-
-
         <FormControl>
           <FormLabel htmlFor="symbolB">SymbolB</FormLabel>
           <Select icon={<RiArrowDownSLine />} placeholder='Select Token Symbol' id="symbolB"  {...register("symbolB") } >
@@ -397,34 +443,100 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
             </FormHelperText>
           )}
         </FormControl>
+
         <FormControl>
           <FormLabel htmlFor="amount">Amount</FormLabel>
 
-        
-        <NumberInput  id="amount"  {...register("amount")}  defaultValue={15} min={10} max={20}>
-         <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-          </NumberInput>
-          
+      <NumberInput  step={5} defaultValue={0} min={0} max={100}   >
+  <NumberInputField />
+  <NumberInputStepper {...register("tokenBname")}>
+    <NumberIncrementStepper />
+    <NumberDecrementStepper />
+  </NumberInputStepper>
+</NumberInput>
 
-        
-          {errors && errors.amount && (
+      {errors && errors.amount && (
             <FormHelperText color="red">
               {errors.amount.message && errors.amount.message}
             </FormHelperText>
           )}
         </FormControl>
 
+        <Stack direction='column'> 
+       <Wrap spacing={4}>
+       <WrapItem>
+      <Button colorScheme='pink'  onClick={()=> { 
+      
+          if(!tokenchosen){
+            setTokenChosen(true); 
+          }
+          else {
+            setTokenChosen(false);
+          }
+      }}>{!tokenchosen?  'ABC' : 'TKA'}</Button>
+      </WrapItem>
+   
+       </Wrap>
+       </Stack>
+
         
         <Button type="submit" colorScheme="blue">
           Submit
         </Button>
       </form>
+      {!isSubmitting}
+      <Accordion defaultIndex={[0]} allowMultiple>
+      <AccordionItem>
+    <h2>
+      <AccordionButton>
+                (<AccordionIcon />
+      </AccordionButton>
+      
+    </h2>
+    <AccordionPanel pb={4}>
+    <TransactionDisplay 
+    account ={accountsretrieved}
+    tokenAname={transactions.tokenAname}
+    symbolA={transactions.tokenBname}
+    tokenBname={transactions.tokenBname}
+    symbolB={transactions.symbolB}
+    amount={transactions.amount}
+    newamount={transactions.newamount}
+    swaphash={transactions.swaphash}
+    from={accountsretrieved}
+    to={''}
+    
+    />
+
+    </AccordionPanel>
+  </AccordionItem>)
+
+  <AccordionItem>
+    <h2>
+      <AccordionButton>
+        <Box flex='1' textAlign='left'>
+          Section 2 title
+        </Box>
+        <AccordionIcon />
+      </AccordionButton>
+    </h2>
+    <AccordionPanel pb={4}>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat.
+    </AccordionPanel>
+  </AccordionItem>
+</Accordion>
+  
     </Box>
+  
+  
+  
   );
+
+
+
 }
 
         
