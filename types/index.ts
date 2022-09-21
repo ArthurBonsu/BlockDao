@@ -50,6 +50,15 @@ export interface CreateTransferInput {
   recipient: string
 }
 
+
+export interface CreateSwapTransferInput {
+  tokenAname:string
+  symbolA:string
+  tokenBname: string
+  symbolB: string
+  amount: number
+}
+
 export interface SafeInfoType {
   address: string
   nonce: number
@@ -126,6 +135,13 @@ export type SwapTransactionType = {
   isCollapsed?: boolean
   shortCutKeys?: string[]
   onClick?: () => void
+  }
+
+  export interface SimpleTokenList{
+    tokenname:string 
+    symbol: string 
+
+
   }
 
 /*

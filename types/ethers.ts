@@ -43,7 +43,7 @@ export interface SwapNewTokenTransaction{
   tokenBname: string
   symbolB: string
   amount: number 
-  newamount: string 
+  newamount: number
   swaphash: string 
   from: string 
   to: string  

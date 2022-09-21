@@ -46,8 +46,7 @@ import {
   import { useCallback, useState, useEffect } from 'react' 
   import { setValues } from 'framer-motion/types/render/utils/setters'
 
-  import useEthers  from '@hooks/useEthers'
-  import { useEthersStore  } from '@stores/ethersStore'
+  
   import {SwapTokenTransaction} from 'types/ethers'
   import hre, { ethers } from 'hardhat';
   import  fs from 'fs';
@@ -61,11 +60,10 @@ import {
   import { Wallet } from "ethers";
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 
-import useSafeInfo, { useSafe } from 'hooks/useSafe'
-import useSafeSdk from 'hooks/useSafeSdk'
+
 import {useSafeProps} from 'hooks/useSafe'
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
-import { useSafeStore} from 'stores/safeStore'
+
 import enableModule from '@utils/enableSafeModule'
 import ApproveTransfer from '@components/ApproveTransfer'
 import Safe, { SafeFactory, SafeAccountConfig,EthSignSignature, ContractNetworksConfig } from '@gnosis.pm/safe-core-sdk';
@@ -81,9 +79,31 @@ import { useQuery } from 'react-query'
 import queries from '@services/queries'
 import getSafesWithoutModule from '@utils/getSafesWithoutModule'
 import useTransaction from 'hooks/useTransactions'
-import { useHashTransactionStore } from '@stores/transactionStore'
-import CreateTransfer from 'components/CreateTransfer'
 
+import CreateTransfer from 'components/CreateTransfer'
+// Parameter Libraries 
+// Stores Library  
+import { useSwapStore  } from '@stores/ContextStores/useSwapStore'
+import { useEthersStore  } from 'stores/ethersStore'
+import { useSafeStore  } from 'stores/safeStore'
+import { useHashTransactionStore  } from 'stores/transactionStore'
+import { useUserStore  } from 'stores/userStore'
+
+//HOOKS
+import  useEthers   from 'hooks/useEthers'
+import  useFetch   from 'hooks/useFetch'
+import  useLoadSafe   from 'hooks/useLoadSafe'
+import  useSafe   from 'hooks/useSafe'
+import useSafeSdk   from 'hooks/useSafeSdk'
+import useTransactions   from 'hooks/useTransactions'
+
+import useSafeInfo from 'hooks/useSafe'
+//Context 
+import  useCrowdsourceContext   from 'context/useCrowdsourceContext'
+import  useDaoContext   from 'context/useDaoContext'
+import  useSwapContext   from 'context/useSwapContext'
+import  useTransactionContext   from 'context/useTransactionContext'
+import useTransferContext   from 'context/useTransferContext'
 
 
 //import { BsCheckLg } from "react-icons/bs";

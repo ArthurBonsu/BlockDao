@@ -1,6 +1,6 @@
 import { CreateTransferInput } from 'types'
 import { InferType, number, object, SchemaOf, string, array } from 'yup'
-import { TokenTypesDetails } from 'types'
+import { TokenTypesDetails, CreateSwapTransferInput } from 'types'
 
 // This sets the schema for validation we use yep for this 
 export const createTransferFormSchema: SchemaOf<{ recipients: Array<Omit<CreateTransferInput, 'accessType'>> }> =
@@ -35,4 +35,21 @@ export const createSwapFormSchema: SchemaOf<{ tokendetails:TokenTypesDetails}> =
 
 
 
-export type TCreateSwapFormSchema = InferType<typeof createSwapFormSchema>
+export type TCreateSwapTransferInput = InferType<typeof createSwapFormSchema>
+
+
+// This sets the schema for validation we use yep for this 
+export const createSwapTransferFormSchema: SchemaOf<{ swaptokendetails:CreateSwapTransferInput}> =
+  object().shape({
+    tokenAname:string().required('Token name is required.'),
+    symbolA:string().required('Symbol is required.'),
+    tokenBname: string().required('Token name  is required.'),
+    symbolB:string().required('Symbol  is required.'),
+    amount:number().required('Amount is required.'),
+       
+    
+  }).required()
+
+
+ 
+export type TcreateSwapTransferFormSchema = InferType<typeof createSwapTransferFormSchema>

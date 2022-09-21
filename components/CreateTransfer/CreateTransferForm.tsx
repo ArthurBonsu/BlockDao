@@ -23,6 +23,7 @@ import { CreateTransferInput } from 'types'
 import supportedNetworkOptions from '@constants/supportedNetworkOptions'
 
 interface CreateTransferFormProps {
+  
   disclosure: UseDisclosureReturn
   onSubmit: (data: { recipients: Array<CreateTransferInput> }) => void
   isLoading?: boolean

@@ -6,7 +6,6 @@ import Welcome from '@components/Welcome';
 import Footer from '@components/Footer';
 import Services from '@components/Services';
 import Transactions from '@components/Transaction';
-
 import { ComponentType, FC, useCallback, useState } from 'react'
 import { Box, Flex, Icon, Menu, MenuButton, Text, Tooltip , Button,HStack, Center, Breadcrumb,
     BreadcrumbItem,    BreadcrumbLink,    BreadcrumbSeparator, Link, Avatar, Stack, chakra, Heading, ButtonGroup, Grid, grid} from '@chakra-ui/react'
@@ -16,6 +15,9 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import {HiMenuAlt4} from 'react-icons/hi'
 import {AiOutlineClose} from 'react-icons/ai'
 import logo from '../images/blockdaologo.png'
+
+// Parameter Libraries 
+// Stores Library  
 import { useSwapStore  } from '@stores/ContextStores/useSwapStore'
 import { useEthersStore  } from 'stores/ethersStore'
 import { useSafeStore  } from 'stores/safeStore'
@@ -30,13 +32,13 @@ import  useSafe   from 'hooks/useSafe'
 import useSafeSdk   from 'hooks/useSafeSdk'
 import useTransactions   from 'hooks/useTransactions'
 
-import useSafeInfo from 'hooks/useSafe'
 //Context 
 import  useCrowdsourceContext   from 'context/useCrowdsourceContext'
 import  useDaoContext   from 'context/useDaoContext'
 import  useSwapContext   from 'context/useSwapContext'
 import  useTransactionContext   from 'context/useTransactionContext'
 import useTransferContext   from 'context/useTransferContext'
+
 
    // Hard Coded but we could set up a page where it can be put into it to be hardcoded
 
@@ -55,9 +57,10 @@ import useTransferContext   from 'context/useTransferContext'
    // FOr each one route to the main page 
 
 //GETTING THE BLOCKCHAIN ADDRESS HERE 
+ 
 
 
-    const HomePage: FC = () => {
+    const SwapTransfer: FC = () => {
      const {data: session} = useSession()
     
     const [isCurrentPage, setisCurrentPage] = useState(false)
@@ -91,7 +94,7 @@ const handleSignOut =async () => {
 <Button onClick={async() => {handleSignOut} }    >SignIn </Button>
 
 </div> 
-    <Services />
+    <SwapTransfer />
     <Transaction />
     <Footer />                         
 </div>
@@ -112,5 +115,5 @@ const handleSignOut =async () => {
 
 }
   
-  export default HomePage; 
+  export default SwapTransfer; 
 

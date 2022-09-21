@@ -215,8 +215,7 @@ const accounts = await ethers.getSigners();
      let provider = new ethers.providers.InfuraProvider('ropsten');
 
       it("Deployment should assign the total supply of tokens to the owner", async function () {
-  
-      
+
 
       transactiontx = await gnosisSafeGetAddressescontract.storeGnosisSafeAddress(account.address,safestring);
  
@@ -266,6 +265,12 @@ const accounts = await ethers.getSigners();
 
 
 //FILTERS
+// for filtering you are very specific as to what you want 
+// for filtering you put in your parameters so that you can be able to get all the log information aboout it
+// so you use 'filter'
+// for queryfilter , you use it with blockhash range of values from a certain block to a particular block
+
+// you use .event.args() to get the values you aim to query
  myEventFilter = gnosisSafeGetAddressescontract.filters.GnosisSafeAddress(account.address, y);
  console.log ("Event Filter", myEventFilter);
  console.log ("Event Filter Address ", myEventFilter.address);

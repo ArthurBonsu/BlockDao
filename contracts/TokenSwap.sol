@@ -52,6 +52,9 @@ contract TokenSwap {
     // control to the user over what calls are transfered instead of inspecting the smart contract
     // approve the caller to transfer one time from the smart contract address to his address
     // transfer the exchanged TokenXYZ to the sender
+       event eventswapTKA (uint256 indexed swapTKAcounter,  uint256 indexed initialamount, uint256 indexed  amountafter ); 
+
+     
     function swapTKA(uint256 amountTKA) public returns (uint256) {
         //check if amount given is not 0
         // check if current contract has the necessary amout of Tokens to exchange
@@ -73,7 +76,7 @@ contract TokenSwap {
             tokenXYZ.balanceOf(address(this)) > exchangeAmount,
             "currently the exchange doesnt have enough XYZ Tokens, please retry later :=("
         );
-
+          uint256   _swapTKAcounter = 0;
         tokenABC.transferFrom(msg.sender, address(this), amountTKA);
         tokenXYZ.approve(address(msg.sender), exchangeAmount);
         tokenXYZ.transferFrom(
@@ -81,9 +84,12 @@ contract TokenSwap {
             address(msg.sender),
             exchangeAmount
         );
+         _swapTKAcounter++;
+       emit  eventswapTKA (_swapTKAcounter,  amountTKA,exchangeAmount); 
         return exchangeAmount;
     }
-
+    
+     event eventswapTKX (uint256 indexed swapTKXcounter,  uint256 indexed initialamount, uint256  indexed amountafter); 
     function swapTKX(uint256 amountTKX) public returns (uint256) {
         //check if amount given is not 0
         // check if current contract has the necessary amout of Tokens to exchange and the sender
@@ -105,6 +111,8 @@ contract TokenSwap {
             tokenABC.balanceOf(address(this)) > exchangeAmount,
             "currently the exchange doesnt have enough XYZ Tokens, please retry later :=("
         );
+
+         uint256 _swapTKXcounter = 0; 
         tokenXYZ.transferFrom(msg.sender, address(this), amountTKX);
         tokenABC.approve(address(msg.sender), exchangeAmount);
         tokenABC.transferFrom(
@@ -112,6 +120,8 @@ contract TokenSwap {
             address(msg.sender),
             exchangeAmount
         );
+          _swapTKXcounter++;
+             emit  eventswapTKX  (_swapTKXcounter, amountTKX, exchangeAmount); 
         return exchangeAmount;
     }
 

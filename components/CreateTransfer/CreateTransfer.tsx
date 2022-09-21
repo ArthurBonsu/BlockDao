@@ -135,7 +135,8 @@ const [isLoading, setIsLoading] = useState(false)
  // EXEC
  const isModuleEnabledInternal = useSafeStore(({ isModuleEnabled }: Safe) => isModuleEnabled)
 let recipients: Array<CreateTransferInput>
-  const createSwapTransaction  =useCallback(   
+ 
+const createSwapTransaction  =useCallback(   
 
   async ( ) => {
     if (safeSdk && signer) {
