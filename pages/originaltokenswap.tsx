@@ -40,7 +40,7 @@ import {
   import AppModal from '@components/AppModal'
   import { ErrorMessage } from '@hookform/error-message'
 
-  import { TCreateSwapFormSchema, createSwapFormSchema } from '../components/CreateTransfer/validation'
+  import { createSwapTransferFormSchema,createSwapFormSchema, createTransferFormSchema } from '../validation'
   import { yupResolver } from '@hookform/resolvers/yup';
   import * as yup from "yup";
   import { useCallback, useState, useEffect } from 'react' 
@@ -582,7 +582,9 @@ return (
                 </option>
                    
              
-             ))
+             )
+             
+             )
                         
               }
       </Select>

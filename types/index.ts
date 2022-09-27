@@ -144,6 +144,13 @@ export type SwapTransactionType = {
 
   }
 
+  export interface ImportMeta {
+    env: {
+   APIKEY: string }
+  }
+
+
+
 /*
  export type Tokens = {
   symbol: string

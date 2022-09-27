@@ -21,6 +21,7 @@ import { PlusSmIcon, MinusSmIcon } from '@heroicons/react/outline'
 import { useFormContext, useFieldArray } from 'react-hook-form'
 import { CreateTransferInput } from 'types'
 import supportedNetworkOptions from '@constants/supportedNetworkOptions'
+import  { TCreateTransferFormSchemaValues,   TCreateSwapTransferInput,    TcreateSwapTransferFormSchema} from '../../validation'
 
 interface CreateTransferFormProps {
   

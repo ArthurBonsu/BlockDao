@@ -2,7 +2,7 @@ import {MenuLabels} from 'types';
 
 import { useRouter } from 'next/router'
 import NavBar from '@components/NavBar';
-import Welcome from '@components/Welcome';
+import Welcome from '@components/SimpleTransfer';
 import Footer from '@components/Footer';
 import Services from '@components/Services';
 import Transactions from '@components/Transaction';
@@ -87,16 +87,30 @@ const handleSignOut =async () => {
 <div className="min-h-screen">
   <div className='gradient-bg-welcome'>  
 <Heading > You are signed in as {session.user.email} </Heading>
-             <NavBar  />
-             <Welcome /> 
+             <NavBar 
+              title= {'Swap Transfer'}
+              address= {'0x.. '} 
+             />
+       
 <Button > Sign Out</Button> 
  
 <Button onClick={async() => {handleSignOut} }    >SignIn </Button>
 
 </div> 
-    <SwapTransfer />
-    <Transaction />
-    <Footer />                         
+    <SwapTransfer    />
+
+
+    <Footer
+    message={'Please join us as we make this world a better place'} 
+    community={'Community'}
+    copyright={'Trademark Policy'} 
+    blog={'Blog'}
+    FAQ={'FAQ'}
+    Contact={'blockdao@gmail.com'}
+    Githuburl={'https://github.com/ArthurBonsu'}  
+    Twitterurl={'https://twitter.com/home'} 
+    Discordurl={'https://uniswap.org/blog/uniswap-v3'}
+    />                                
 </div>
 </>
 ) : (

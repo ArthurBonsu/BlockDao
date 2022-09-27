@@ -1,8 +1,8 @@
 import { FC, useEffect } from 'react'
 import { Button, Grid } from '@chakra-ui/react'
-import useEthers from '@hooks/useEthers'
+
 import { useRouter } from 'next/router'
-import { useEthersStore } from '@stores/ethersStore'
+
 import { useSession } from 'next-auth/react'
 
 import { useSwapStore  } from '@stores/ContextStores/useSwapStore'

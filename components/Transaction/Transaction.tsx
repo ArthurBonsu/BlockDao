@@ -1,5 +1,5 @@
-import { Heading , Stack} from "@chakra-ui/react";
 
+import {InputGroup,  Text,Input, InputRightAddon,  Heading , Image , Stack} from "@chakra-ui/react";
 import { FC, useCallback, useState, useContext } from 'react'
 import { shortenAddress } from "../../constants/shortenAddress";
 import dummyData from "../../constants/dummyData"
@@ -85,7 +85,7 @@ const TransactionsCard = ({ addressTo, addressFrom, timestamp, message, keyword,
             </>
           )}
         </div>
-        <img
+        <Image
           src={gifUrl || url}
           alt="nature"
           className="w-full h-64 2xl:h-96 rounded-md shadow-lg object-cover"

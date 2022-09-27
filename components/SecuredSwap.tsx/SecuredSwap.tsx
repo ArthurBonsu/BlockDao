@@ -1,22 +1,49 @@
-//STORES
-import { useSwapStore  } from '@stores/ContextStores/useSwapStore'
-import { useEthersStore  } from 'stores/ethersStore'
-import { useSafeStore  } from 'stores/safeStore'
-import { useHashTransactionStore  } from 'stores/transactionStore'
-import { useUserStore  } from 'stores/userStore'
+import { Button, ButtonProps, useDisclosure } from '@chakra-ui/react'
+import AppAlertDialog from '@components/AppAlertDialog'
+import useSafeSdk from 'hooks/useSafeSdk'
+import { FC, useCallback, useState } from 'react'
 
-//HOOKS
-import  useEthers   from 'hooks/useEthers'
-import  useFetch   from 'hooks/useFetch'
-import  useLoadSafe   from 'hooks/useLoadSafe'
-import  useSafe   from 'hooks/useSafe'
-import useSafeSdk   from 'hooks/useSafeSdk'
-import useTransactions   from 'hooks/useTransactions'
+interface RejectTransferProps extends ButtonProps {
+  safeTxHash: string | null
+  threshold: number
+  execTxn: Boolean
+  nonce: number
+  hashTxn?:string
+}
 
-import useSafeInfo from 'hooks/useSafe'
-//Context 
-import  useCrowdsourceContext   from 'context/useCrowdsourceContext'
-import  useDaoContext   from 'context/useDaoContext'
-import  useSwapContext   from 'context/useSwapContext'
-import  useTransactionContext   from 'context/useTransactionContext'
-import useTransferContext   from 'context/useTransferContext'
+// reject transfer 
+const SecuredSwap: FC<RejectTransferProps> = ({ safeTxHash, threshold, execTxn, nonce,hashTxn, ...rest }) => {
+  const [isLoading, setIsLoading] = useState(false)
+  const localDisclosure = useDisclosure()
+  const { rejectTransfer } = useSafeSdk()
+
+  const handleSubmit = useCallback(async () => {
+    setIsLoading(true)
+
+    await rejectTransfer({ safeTxHash, execTxn, nonce , hashTxn})
+
+    setIsLoading(false)
+    localDisclosure.onClose()
+  }, [rejectTransfer, safeTxHash, execTxn, nonce, localDisclosure, hashTxn])
+
+  return (
+    <>
+      <Button onClick={localDisclosure.onOpen} {...rest}>
+        Reject
+      </Button>
+      <AppAlertDialog
+        isLoading={isLoading}
+        handleSubmit={handleSubmit}
+        header="Reject Transaction"
+        body="This action will reject this transaction. A separate Transaction will be performed to submit the rejection."
+        disclosure={localDisclosure}
+        customOnClose={() => {
+          localDisclosure.onClose()
+          setIsLoading(false)
+        }}
+      />
+    </>
+  )
+}
+
+export default SecuredSwap

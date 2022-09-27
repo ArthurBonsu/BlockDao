@@ -1,4 +1,8 @@
+import { ethers } from "ethers"
 import {MenuLabels} from 'types';
+import Router from 'next/router'
+
+import { useQuery } from 'react-query'
 
 import { useRouter } from 'next/router'
 import NavBar from '@components/NavBar';
@@ -57,10 +61,15 @@ import useTransferContext   from 'context/useTransferContext'
    // FOr each one route to the main page 
 
 //GETTING THE BLOCKCHAIN ADDRESS HERE 
+
+// the let mywalletbalance = await account.getBalance();
+// console.log("This is the balance", mywalletbalance);
  
+// let us pull in the address here
 
-
-    const Crowdsource: FC = () => {
+const walletAddress = useEthersStore((state) => state.address)
+const walletCheckSumAddress = walletAddress ? ethers.utils.getAddress(walletAddress) : ''
+    const SimpleTransferPage: FC = () => {
      const {data: session} = useSession()
     
     const [isCurrentPage, setisCurrentPage] = useState(false)
@@ -87,15 +96,18 @@ const handleSignOut =async () => {
 <div className="min-h-screen">
   <div className='gradient-bg-welcome'>  
 <Heading > You are signed in as {session.user.email} </Heading>
-             <NavBar title={'Dao Page For Blockchain'}
-               address={'blockchain address'}  />
-             <SimpleTransfer /> 
+             <NavBar 
+              title= {'Simple Transfer'}
+              address= {'0x.. '} 
+             />
+       
 <Button > Sign Out</Button> 
  
 <Button onClick={async() => {handleSignOut} }    >SignIn </Button>
 
 </div> 
-    <Crowdsource />
+    <SimpleTransfer    />
+
 
     <Footer
     message={'Please join us as we make this world a better place'} 
@@ -107,7 +119,7 @@ const handleSignOut =async () => {
     Githuburl={'https://github.com/ArthurBonsu'}  
     Twitterurl={'https://twitter.com/home'} 
     Discordurl={'https://uniswap.org/blog/uniswap-v3'}
-    />                                 
+    />                                
 </div>
 </>
 ) : (
@@ -126,5 +138,5 @@ const handleSignOut =async () => {
 
 }
   
-  export default Crowdsource; 
+  export default SimpleTransferPage; 
 

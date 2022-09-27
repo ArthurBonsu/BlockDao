@@ -41,6 +41,7 @@ interface NavBarProps{
 }
 
 const NavBar: React.FC<NavBarProps> = ({
+  title,
   address 
   }) => {
     const { onDisconnect } = useEthers()

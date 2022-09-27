@@ -1,11 +1,12 @@
-import { Heading , Stack} from "@chakra-ui/react";
-import React, { useContext } from "react";
+import {InputGroup,  Text,Input, InputRightAddon,  Heading , Image , Stack} from "@chakra-ui/react";
+
+import { ComponentType, FC, useCallback, useState } from 'react'
 import { AiFillPlayCircle } from "react-icons/ai";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 import  {shortenAddress}  from "../../constants/shortenAddress";
 import  dummyData  from "../../constants/dummyData";
-import  Loader from "../../components/Loader";
+import  Loader from "../Loader";
 import { setValues } from "framer-motion/types/render/utils/setters";
 //STORES
 import { useSwapStore  } from '@stores/ContextStores/useSwapStore'
@@ -30,45 +31,87 @@ import  useSwapContext   from 'context/useSwapContext'
 import  useTransactionContext   from 'context/useTransactionContext'
 import useTransferContext   from 'context/useTransferContext'
 
+interface SimpleTransferProp {
+  title?:string 
 
-const WelcomeInput = ({ placeholder, name, type, value, handleChange }) => (
-  <input
-    placeholder={placeholder}
-    type={type}
-    step="0.0001"
-    value={value}
-    onChange={(e) => handleChange(e, name)}
-    className="my-2 w-full rounded-sm p-2 outline-none bg-transparent text-white border-none text-sm white-glassmorphism"
+}
+const WelcomeInput = () => (
+  
+  
+<Stack spacing={4}>
+  <InputGroup>
+    <InputRightAddon children='+234' />
+    <Input type='tel' placeholder='phone number' />
+  </InputGroup>
+  <Input focusBorderColor='lime' placeholder='Here is a sample placeholder' />
+  <Input
+    isInvalid
+    errorBorderColor='red.300'
+    placeholder='Here is a sample placeholder'
   />
-);
+
+<Input
+    isInvalid
+    errorBorderColor='crimson'
+    placeholder='Here is a sample placeholder'
+  />
+
+  <InputGroup>
+    <InputRightAddon children='+234' />
+    <Input type='tel' placeholder='phone number' />
+  </InputGroup>
+
+  <InputGroup>
+    <InputRightAddon children='+234' />
+    <Input type='tel' placeholder='phone number' />
+  </InputGroup>
+
+
+
+ </Stack> 
+ );
 
 const companyCommonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
-const Welcome = () => {
+const SimpleTransfer: FC<SimpleTransferProp>  = ({title}) => {
    
-   
- 
   const {  connectWallet,currentAccount,isLoading,sendTransaction,handleChange,formData, } = useTransactionContext();
+ 
+ 
 
     const handleSubmit = (e) => {
       const { addressTo, amount, keyword, message } = formData;
   
       e.preventDefault();
+      //Implementation of transfer
   
       if (!addressTo || !amount || !keyword || !message) return;
   
       sendTransaction();
+    }
 
     return (
       <div className="flex w-full justify-center items-center">
       <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4">
         <div className="flex flex-1 justify-start items-start flex-col mf:mr-10">
-          <h1 className="text-3xl sm:text-5xl text-white text-gradient py-1">
-            Send Crypto <br /> across the world
-          </h1>
+        <Stack direction='row'>
+
+  <Image
+    boxSize='500px'
+    objectFit='cover'
+    src='https://www.freepik.com/free-vector/flat-design-autumnal-background-with-kid-running_9452006.htm'
+    alt='Dan Abramov'
+  />
+  
+</Stack>
+
           <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
-            Explore the crypto world. Buy and sell cryptocurrencies easily on Krypto.
-          </p>
+          <Stack spacing={3}>
+ 
+         <Text fontSize='10xl'>Wecome To Block Dao where we give you services for free</Text>
+
+           </Stack>  
+         </p>
           {!currentAccount && (
             <button
               type="button"
@@ -84,22 +127,22 @@ const Welcome = () => {
 
           <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10">
             <div className={`rounded-tl-2xl ${companyCommonStyles}`}>
-              Reliability
+              Enjoy your DAO
             </div>
-            <div className={companyCommonStyles}>Security</div>
+            <div className={companyCommonStyles}>Premium</div>
             <div className={`sm:rounded-tr-2xl ${companyCommonStyles}`}>
-              Ethereum
+              MUltisignature Swap
             </div>
             <div className={`sm:rounded-bl-2xl ${companyCommonStyles}`}>
-              Web 3.0
+              Crowdsource
             </div>
             <div className={companyCommonStyles}>Low Fees</div>
             <div className={`rounded-br-2xl ${companyCommonStyles}`}>
-              Blockchain
+              Swap and Transfer 
             </div>
           </div>
         </div>
-
+       
         <div className="flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10">
           <div className="p-3 flex justify-end items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card .white-glassmorphism ">
             <div className="flex justify-between flex-col w-full h-full">
@@ -114,19 +157,21 @@ const Welcome = () => {
                   {shortenAddress(currentAccount)}
                 </p>
                 <p className="text-white font-semibold text-lg mt-1">
-                  Ethereum
+                <Heading>Simply transfer to Friends and Family</Heading>
                 </p>
               </div>
             </div>
           </div>
-          <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
-            <WelcomeInput placeholder="Address To" name="addressTo" type="text" value="" handleChange={handleChange} />
-            <WelcomeInput placeholder="Amount (ETH)" name="amount" type="number" value=""   handleChange={handleChange} />
-            <WelcomeInput placeholder="Keyword (Gif)" name="keyword" type="text" value=""  handleChange={handleChange} />
-            <WelcomeInput placeholder="Enter Message" name="message" type="text" value="" handleChange={handleChange} />
-
+   
+          <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism"> /</div>
+            
+          <Heading as='h3' size='lg'>  Your balance is: =   </Heading>
+          <Text fontSize='6xl'> Fill in the form below </Text>
             <div className="h-[1px] w-full bg-gray-400 my-2" />
-
+            <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
+              <WelcomeInput />
+            
+            <div className="h-[1px] w-full bg-gray-400 my-2" />
             {isLoading
               ? (<Loader/> )
               : (
@@ -143,6 +188,9 @@ const Welcome = () => {
       </div>
     </div>
     )
-}
-}
-export default Welcome;
+
+ 
+
+  }
+
+export default SimpleTransfer;

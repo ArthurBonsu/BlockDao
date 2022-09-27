@@ -1,8 +1,8 @@
 import {MenuLabels} from 'types';
-
+import { ethers } from "ethers";
 import { useRouter } from 'next/router'
 import NavBar from '@components/NavBar';
-import Welcome from '@components/Welcome';
+import SimpleTransfer from '@components/SimpleTransfer';
 import Footer from '@components/Footer';
 import Services from '@components/Services';
 import Transactions from '@components/Transaction';
@@ -37,7 +37,8 @@ import  useDaoContext   from 'context/useDaoContext'
 import  useSwapContext   from 'context/useSwapContext'
 import  useTransactionContext   from 'context/useTransactionContext'
 import useTransferContext   from 'context/useTransferContext'
-
+import { BsInfoCircle } from "react-icons/bs";
+import {BsGithub, BsTwitter, BsGoogle} from 'react-icons/bs'
    // Hard Coded but we could set up a page where it can be put into it to be hardcoded
 
 
@@ -84,16 +85,36 @@ const handleSignOut =async () => {
 <div className="min-h-screen">
   <div className='gradient-bg-welcome'>  
 <Heading > You are signed in as {session.user.email} </Heading>
-             <NavBar  />
-             <Welcome /> 
+             <NavBar 
+              title={'Dao Page For Blockchain'}
+              address={'blockchain address'}
+             />
+                    
 <Button > Sign Out</Button> 
  
 <Button onClick={async() => {handleSignOut} }    >SignIn </Button>
 
 </div> 
-    <Services />
-    <Transaction />
-    <Footer />                         
+    <Services 
+      color= {'blue'}
+      title={'BlockDaO Services'}
+      icon= {BsInfoCircle}
+      subtitle={'We deliver multiple services such as DAO and Crowdsource funds for you and your partners'}
+      
+
+    />
+    
+    <Footer
+    message={'Please join us as we make this world a better place'} 
+    community={'Community'}
+    copyright={'Trademark Policy'} 
+    blog={'Blog'}
+    FAQ={'FAQ'}
+    Contact={'blockdao@gmail.com'}
+    Githuburl={'https://github.com/ArthurBonsu'}  
+    Twitterurl={'https://twitter.com/home'} 
+    Discordurl={'https://uniswap.org/blog/uniswap-v3'}
+    />                         
 </div>
 </>
 ) : (
@@ -111,6 +132,7 @@ const handleSignOut =async () => {
   
 
 }
-  
+
+
   export default HomePage; 
 

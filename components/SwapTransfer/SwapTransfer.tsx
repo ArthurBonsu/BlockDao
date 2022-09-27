@@ -6,9 +6,8 @@ import { Button, ButtonProps, Flex, useDisclosure, AlertDialog,Alert,  AlertDial
   AlertDialogFooter,  AlertDialogHeader,  AlertDialogOverlay,   UseDisclosureReturn, Select,FormErrorMessage, FormControl, FormLabel,
   NumberInput,NumberInputField, NumberIncrementStepper,NumberDecrementStepper,NumberInputStepper, Input,IconButton, AlertIcon, Grid,
     Box,  Text,  InputGroup,  InputRightAddon, FormHelperText,Wrap,  WrapItem, VisuallyHidden, VisuallyHiddenInput, Accordion,AccordionItem,AccordionButton,
-    AccordionPanel, AccordionIcon
-
-} from '@chakra-ui/react'
+    AccordionPanel, AccordionIcon } from '@chakra-ui/react'
+    
 import {RiArrowDownSLine} from 'react-icons/all'
 import {  createSwapFormSchema, createSwapTransferFormSchema,  } from '../../validation'
   import { BsShieldFillCheck } from "react-icons/bs";
@@ -216,34 +215,7 @@ const TransactionDisplay = ({ account, tokenAname, symbolA, tokenBname , symbolB
 
 const createTransferSwap:  React.FC<CreateSwapTransferInput> = ( {tokenAname, symbolA,tokenBname,symbolB, amount} :CreateSwapTransferInput) => {
 
-  // getting address and state of address
-  const address = useEthersStore((state) => state.address)
-  const provider = useEthersStore((state) => state.provider)
-  const setAddress = useEthersStore((state) => state.setAddress)
-  const setEtherStore = useEthersStore((state) => state.setEtherStore)
-    
-  const selectedSafe = useSafeStore((state) => state.selectedSafe)
-  const isModuleEnabled = useSafeStore((state) => state.isModuleEnabled)
-  const setIsModuleEnabled = useSafeStore((state) => state.setIsModuleEnabled)
-
-    // Provider information to be provided
-    const txhash  = useHashTransactionStore((state) => state.txhash)
-    const txdata = useHashTransactionStore((state) => state.txdata)
-    const logouri = useHashTransactionStore((state) => state.txlogoUri)
-    const setHashTransaction = useHashTransactionStore((state) => state.setTransaction)
-    const setHashTransactionData = useHashTransactionStore((state) => state.setTransactionData)
-    const setHashTransactionTokenAmount = useHashTransactionStore((state) => state.setTransactionAmount)
-    const setHashTransactionName = useHashTransactionStore((state) => state.setTransactionName)
-    const setHashTransactionSymbol = useHashTransactionStore((state) => state.setTransactionSymbol)
-    const setHashTransactionSigner = useHashTransactionStore((state) => state.setTransactionSigner)
-    const setHashTransactionTxLogoUri = useHashTransactionStore((state) => state.setTransactionTxLogoUri)
-    const walletAddress = useEthersStore((state) => state.address)
-    const walletCheckSumAddress = walletAddress ? ethers.utils.getAddress(walletAddress) : ''
-
-    setHashTransaction(txhash)       
-    setHashTransactionData(txdata)   
-    setHashTransactionTxLogoUri(logouri)
-    setHashTransactionSymbol(symbolB)
+ 
     
    
 
@@ -317,7 +289,34 @@ const {
 
 
 const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
+ // getting address and state of address
+ const address = useEthersStore((state) => state.address)
+ const provider = useEthersStore((state) => state.provider)
+ const setAddress = useEthersStore((state) => state.setAddress)
+ const setEtherStore = useEthersStore((state) => state.setEtherStore)
+   
+ const selectedSafe = useSafeStore((state) => state.selectedSafe)
+ const isModuleEnabled = useSafeStore((state) => state.isModuleEnabled)
+ const setIsModuleEnabled = useSafeStore((state) => state.setIsModuleEnabled)
 
+   // Provider information to be provided
+   const txhash  = useHashTransactionStore((state) => state.txhash)
+   const txdata = useHashTransactionStore((state) => state.txdata)
+   const logouri = useHashTransactionStore((state) => state.txlogoUri)
+   const setHashTransaction = useHashTransactionStore((state) => state.setTransaction)
+   const setHashTransactionData = useHashTransactionStore((state) => state.setTransactionData)
+   const setHashTransactionTokenAmount = useHashTransactionStore((state) => state.setTransactionAmount)
+   const setHashTransactionName = useHashTransactionStore((state) => state.setTransactionName)
+   const setHashTransactionSymbol = useHashTransactionStore((state) => state.setTransactionSymbol)
+   const setHashTransactionSigner = useHashTransactionStore((state) => state.setTransactionSigner)
+   const setHashTransactionTxLogoUri = useHashTransactionStore((state) => state.setTransactionTxLogoUri)
+   const walletAddress = useEthersStore((state) => state.address)
+   const walletCheckSumAddress = walletAddress ? ethers.utils.getAddress(walletAddress) : ''
+
+   setHashTransaction(txhash)       
+   setHashTransactionData(txdata)   
+   setHashTransactionTxLogoUri(logouri)
+   setHashTransactionSymbol(symbolB)
    setIsLoading(true)
 
 
@@ -484,12 +483,12 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
           Submit
         </Button>
       </form>
-      {!isSubmitting}
+      {!isSubmitting}? 
       <Accordion defaultIndex={[0]} allowMultiple>
       <AccordionItem>
     <h2>
       <AccordionButton>
-                (<AccordionIcon />
+      (<AccordionIcon />
       </AccordionButton>
       
     </h2>
@@ -509,24 +508,9 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
     />
 
     </AccordionPanel>
-  </AccordionItem>)
+  </AccordionItem>): (<Text> Transaction not complete</Text>)
 
-  <AccordionItem>
-    <h2>
-      <AccordionButton>
-        <Box flex='1' textAlign='left'>
-          Section 2 title
-        </Box>
-        <AccordionIcon />
-      </AccordionButton>
-    </h2>
-    <AccordionPanel pb={4}>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat.
-    </AccordionPanel>
-  </AccordionItem>
+  
 </Accordion>
   
     </Box>
@@ -538,7 +522,5 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
 
 
 }
-
-        
-
+ 
 export default createTransferSwap;
