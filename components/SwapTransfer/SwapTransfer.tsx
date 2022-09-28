@@ -45,20 +45,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 
 
-import { useCallback, useState, useEffect } from 'react' 
+import React,{ useCallback, useState, useEffect } from 'react' 
 import { setValues } from 'framer-motion/types/render/utils/setters'
 import Router from 'next/router'
 import { useQuery } from 'react-query'
 import queries from "@services/queries";
 
 
-const { getDisclosureProps, getButtonProps } = useDisclosure()
-const localDisclosure = useDisclosure()
-  
-const { isOpen, onOpen, onClose } = useDisclosure()
-const {onConnect,  onDisconnect } = useEthers()
-const buttonProps = getButtonProps()
-const disclosureProps  = getDisclosureProps()
+
 
 interface CreateSwapTransferFormProps {
     disclosure: UseDisclosureReturn
@@ -88,6 +82,16 @@ interface SwapCardServiceProps{
   
 ]
 
+
+
+  // onchange handling, to post text
+
+  // submission
+
+ //const { tokenuri } = useQuery(`tokenuri}`, queries.getTokenUri('tokenuri'), {
+ // enabled: !!tokenuri,
+ // cacheTime: 100,
+//})
 // THE BEAUTIFUL DYNAMIC VIEW HERE CAN BE USED FOR OTHER NAVIGATION VIEW, RIGHT NOW WWE WANT ONLY ONE CARD
   /*
 const TransactionDisplay = ({ color, title, icon , subtitle }) => (
@@ -152,8 +156,7 @@ const SwapTransferService: React.FC<SwapCardServiceProps> = ({
     }
 */
 
-const {  swapTKA ,swapTKX,transactionCount,connectWallet,transactions,currentAccount,sendTransaction,handleChange,
-  formData,accountsretrieved,origamount,newtokenamount} = useSwapContext();
+
 const TransactionDisplay = ({ account, tokenAname, symbolA, tokenBname , symbolB,  amount,newamount, swaphash,from, to  }) => {
   return (
 <Stack spacing={6}>
@@ -213,32 +216,10 @@ const TransactionDisplay = ({ account, tokenAname, symbolA, tokenBname , symbolB
   )
 }
 
-const createTransferSwap:  React.FC<CreateSwapTransferInput> = ( {tokenAname, symbolA,tokenBname,symbolB, amount} :CreateSwapTransferInput) => {
 
- 
-    
-   
+const SwapTransfer:  React.FC<CreateSwapTransferInput> = ( {tokenAname, symbolA,tokenBname,symbolB, amount} :CreateSwapTransferInput) => {
 
-    const schema = yup.object({
-      tokenAname: yup.string().required(),
-      symbolA: yup.string().required(), 
-      tokenBname:yup.string().required(),
-      symbolB: yup.string().required(),
-      amount:yup.number().required(),
-      
-    }).required();
-
-const [isLoading, setIsLoading] = useState(false)
-const [isSwapping, setIsSwapping] = useState(true)
- const [isTyping, setIsTyping] = useState(true)  
-const [transaction,setTransaction] = useState('')
-const [token, setToken] = useState({})
-const [value, setValue] = useState('')
-const [_currentAccount, setCurrentAccount] = useState('')
-const [tokenchosen, setTokenChosen] = useState(false);
-const [isSubmitted, setIsSubmitted] = useState(false);
-    /*
-const schema = yup.object({
+   /*const schema = yup.object({
   symbol: yup.string().required(),
   tokenstring: yup.string().required(),
   decimals: yup.string().required(),
@@ -246,6 +227,26 @@ const schema = yup.object({
   address: yup.string().required(),
 }).required();
 */
+const [isLoading, setIsLoading] = useState(false)
+const [isSwapping, setIsSwapping] = useState(true)
+const [isTyping, setIsTyping] = useState(true)  
+const [transaction,setTransaction] = useState('')
+const [token, setToken] = useState({})
+const [value, setValue] = useState('')
+const [_currentAccount, setCurrentAccount] = useState('')
+const [tokenchosen, setTokenChosen] = useState(false);
+const [isSubmitted, setIsSubmitted] = useState(false);
+  
+
+const schema = yup.object({
+  tokenAname: yup.string().required(),
+  symbolA: yup.string().required(), 
+  tokenBname:yup.string().required(),
+  symbolB: yup.string().required(),
+  amount:yup.number().required(),
+  
+}).required();
+
 
 const {
   register,
@@ -268,27 +269,25 @@ const {
    }  );
 
    const amountWatch = watch("amount")
+const handleChange = (event) => { 
+  isTyping
+  setValue(event.target.value)
+  !isTyping
+  // Logic of token conversion must be here
 
-  const handleChange = (event) => { 
-    isTyping
-    setValue(event.target.value)
-    !isTyping
-    // Logic of token conversion must be here
+}
+const {  swapTKA ,swapTKX,transactionCount,connectWallet,transactions,currentAccount,sendTransaction,
+  formData,accountsretrieved,origamount,newtokenamount} = useSwapContext();
+
   
-  }
- 
-  // onchange handling, to post text
+  const { getDisclosureProps, getButtonProps } = useDisclosure()
+const localDisclosure = useDisclosure()
+  
+const { isOpen, onOpen, onClose } = useDisclosure()
+const {onConnect,  onDisconnect } = useEthers()
+const buttonProps = getButtonProps()
+const disclosureProps  = getDisclosureProps()
 
-  // submission
-
- //const { tokenuri } = useQuery(`tokenuri}`, queries.getTokenUri('tokenuri'), {
- // enabled: !!tokenuri,
- // cacheTime: 100,
-//})
-
-
-
-const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
  // getting address and state of address
  const address = useEthersStore((state) => state.address)
  const provider = useEthersStore((state) => state.provider)
@@ -317,12 +316,14 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
    setHashTransactionData(txdata)   
    setHashTransactionTxLogoUri(logouri)
    setHashTransactionSymbol(symbolB)
-   setIsLoading(true)
+const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
+ 
+  setIsLoading(true)
 
 
        connectWallet(); 
      setCurrentAccount(currentAccount);
-     console.log('Current Account' + currentAccount); 
+    // console.log('Current Account' + currentAccount); 
     
      if(!tokenchosen){
       setIsLoading(true);
@@ -343,13 +344,13 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
       return {origamount,newtokenamount, tokenAname, symbolA,tokenBname,symbolB, amount,  transactions, accountsretrieved, formData}
   }
    
-  const onError = (error) => {
-    console.log("Error:::::::", error);
-  };
+ // const onError = (error) => {
+ //   console.log("Error", error);
+  //};
   
   return (
     <Box m="5">
-      <form onSubmit={handleSubmit(()=> {onSubmit(tokenAname, symbolA,tokenBname,symbolB, amount), onError})}>
+      <form onSubmit={handleSubmit(()=> {onSubmit(tokenAname, symbolA,tokenBname,symbolB, amount)})}>
        
         <FormControl>
        
@@ -523,4 +524,4 @@ const  onSubmit = async (tokenAname, symbolA,tokenBname,symbolB, amount   ) => {
 
 }
  
-export default createTransferSwap;
+export default SwapTransfer;

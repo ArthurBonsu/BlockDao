@@ -25,6 +25,7 @@ import  useDaoContext   from 'context/useDaoContext'
 import  useSwapContext   from 'context/useSwapContext'
 import  useTransactionContext   from 'context/useTransactionContext'
 import useTransferContext   from 'context/useTransferContext'
+
 interface ServiceProps{
 
   color:string,
@@ -48,6 +49,10 @@ const ServiceCard = ({ color, title, icon , subtitle }) => (
 );
 
 const Services: React.FC<ServiceProps> = ({
+
+  color,
+  title,
+  icon
 
   }) => {
 

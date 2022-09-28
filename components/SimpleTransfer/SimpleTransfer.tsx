@@ -40,7 +40,7 @@ const WelcomeInput = () => (
   
 <Stack spacing={4}>
   <InputGroup>
-    <InputRightAddon children='+234' />
+    <InputRightAddon> +233 </InputRightAddon>  
     <Input type='tel' placeholder='phone number' />
   </InputGroup>
   <Input focusBorderColor='lime' placeholder='Here is a sample placeholder' />
@@ -57,12 +57,12 @@ const WelcomeInput = () => (
   />
 
   <InputGroup>
-    <InputRightAddon children='+234' />
+    <InputRightAddon> +233</InputRightAddon>
     <Input type='tel' placeholder='phone number' />
   </InputGroup>
 
   <InputGroup>
-    <InputRightAddon children='+234' />
+    <InputRightAddon> 1307</InputRightAddon>
     <Input type='tel' placeholder='phone number' />
   </InputGroup>
 
@@ -73,7 +73,7 @@ const WelcomeInput = () => (
 
 const companyCommonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
-const SimpleTransfer: FC<SimpleTransferProp>  = ({title}) => {
+const SimpleTransfer: React.FC = ( ) => {
    
   const {  connectWallet,currentAccount,isLoading,sendTransaction,handleChange,formData, } = useTransactionContext();
  
