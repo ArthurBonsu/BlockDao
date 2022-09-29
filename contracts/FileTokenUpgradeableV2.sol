@@ -19,6 +19,8 @@ string private _tokensymbol;
 address private _owner;
 // Service types here 
 string   hybrid;
+string basic;
+string premium;
 bool   basicchosen;
 bool   premiumchosen;
 bool   hybridchosen;    
@@ -69,6 +71,7 @@ Grid[] public filegridregistered;
 Users[] public usersregistered;
 UserInfileGridInfo[] public usersingridinfo;
 event Adminset(address _adminset);
+event payfeeevent(address payable sender, uint256 amount);
 function ownerpick(address __owner )  public   {
 // Full initializations
 _totalSupply =1000000;
@@ -99,6 +102,8 @@ emit Adminset(__owner);
 function payfee(address payable sender, uint256 amount) external payable returns(bool, bytes memory){
 // Call returns a boolean value indicating success or failure.
 // This is the current recommended method to use.
+
+
 _owner =owner();
 require ( amount >= 10, "Amount not enough to play!");
 // (bool sent, bytes memory data) = msg.sender.call{value: _payfee}("");
@@ -106,6 +111,7 @@ require ( amount >= 10, "Amount not enough to play!");
 (bool success,bytes memory data ) = _owner.call{value: _payfee}("");
 require(success, "Check the amount sent as well"); 
 paidforgridusage[sender]= true;
+emit payfeeevent( sender, amount);
 return (success,data);
 }
 //Eventing everything, we wont need events

@@ -116,6 +116,21 @@ export type SwapTransactionType = {
   txdata?: string
  }
 
+
+ export type PaymentTransactions = {
+  username: string , 
+  address:string, 
+  amount:number , 
+  comment:string ,
+  timestamp:Date, 
+  receipient:string ,
+  receipients: Array<string> ,
+  txhash:string , 
+  USDprice:number,
+  paymenthash: string,
+  owneraddress: string  
+ }
+
  export interface TokenInfoResponse{
  type : string 
  address: string

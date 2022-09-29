@@ -1,3 +1,6 @@
+//export {  default } from './gethardhatconfig'
+
+
 export {
   getInfuraProvider,
 getInfuraListedAccounts,
@@ -39,4 +42,4 @@ getContractEventWithListener,
 getContractEmmittedWithListener,
 getDeployedTransactionForContractFactory,
 getWalletForInfura
-} from "./helpers";
+} from "./getHelper";

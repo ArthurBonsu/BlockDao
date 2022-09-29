@@ -3,22 +3,22 @@ import   { useState, useEffect }  from "react";
 import ReactDom from "react-dom";
 import Web3 from 'web3';
 
-const hre  = require  ("hardhat");
+import  hre  from "hardhat";
 import  { HardhatRuntimeEnvironment } from "hardhat/types";
 import  { DeployFunction }  from "hardhat-deploy/types";
 //let ethers  = require("ethers");
-let  { Signer, BigNumber, ContractFactory, Contract } =require ("ethers");
+import   { Signer, BigNumber, ContractFactory, Contract } from "ethers";
 
-let  { expect } =require ("chai");
-let  Chai   =require ("chai");
-let  Chaiaspromised =require ("chai-as-promised");
-let  {ethers,utils, Wallet } =require  ("ethers");
+import   { expect } from "chai";
+import   Chai  from "chai" ;
+import   Chaiaspromised from "chai-as-promised";
+import   {ethers,utils, Wallet } from   "ethers";
 //import {getInfuraProvider, getWallet } from "../utils/helpers";
-let  assert =require('assert');
+import    assert from 'assert';
+import  Fs  from 'fs';
+import  { networkConfig, getNetworkIdFromName } from "../utils/gethardhatconfig.js";
 
-let { networkConfig, getNetworkIdFromName } =require ("../utils/helper-hardhat-config");
-
-let  { TransactionRequest } = require("@ethersproject/abstract-provider");
+import   { TransactionRequest }  from "@ethersproject/abstract-provider";
 let ethereumwallet;
 
 const  ROPSTEN_NETWORK = process.env.ROPSTEN_NETWORK;
@@ -35,7 +35,7 @@ const RINKEBY_API_KEYCODE =  process.env.RINKEBY_API_KEY;
 const PRIVATE_KEYCODE = process.env.PRIVATE_KEY;
 const APIKEY = process.env.APIKEY;
 
-const Fs = require('fs')
+
 
 let error;
 let result;

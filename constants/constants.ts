@@ -6,6 +6,8 @@ import TokenETHabi from  '../artifacts/contracts/TokenETH.sol/TokenETH.json'
 import TokenSwapabi from  '../artifacts/contracts/TokenSwap.sol/TokenSwap.json'
 import TokenXYZabi from  '../artifacts/contracts/TokenXYZ.sol/TokenXYZ.json'
 import abi from "./Transactions.json";
+import FileTokenUpgradeable  from '../artifacts/contracts/FileTokenUpgradeable.sol/FileTokenUpgradeable.json'
+import FileTokenUpgradeableV2  from '../artifacts/contracts/FileTokenUpgradeableV2.sol/FileTokenUpgradeableV2.json'
 // Gnosis Safe Contract
 export const GnosiscontractABI = GnosisSafeGetAddressesabi.abi
 export const GnosiscontractAddress = '0x0E7d2dd5901f10736D51DE67F047c6B1cB0D0A8a'
@@ -40,10 +42,12 @@ export const TokenSwapcontractAddress = '0x1AD9FD181fA741Fe8fF3D723f38b4A8eAE1A9
 export const contractAddress = "0xfCCF80344a668b72ac4Be23513F0E9E4a35C84fA";
 export const contractABI = abi.abi;
 
+export const FileTokenUpgradeableAddress = "0xfCCF80344a668b72ac4Be23513F0E9E4a35C84fA";
+export const FileTokenUpgradeableABI = FileTokenUpgradeable.abi;
 
 
-
-
+export const FileTokenUpgradeableV2Address = "";
+export const FileTokenUpgradeableV2ABI = FileTokenUpgradeableV2.abi;
 
 
 

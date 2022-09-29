@@ -39,11 +39,11 @@
         "test/*"
       ]
     },
-    "target": "es6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ES2021', or 'ESNEXT'. */,
+    "target": "ESNEXT" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ES2021', or 'ESNEXT'. */,
     "module": "esnext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
     "lib": [
       "es5",
-      "es6"
+      "ESNEXT"
     ], /* Specify library files to be included in the compilation. */
     "allowJs": true /* Allow javascript files to be compiled. */,
     "jsx": "preserve" /* Specify JSX code generation: 'preserve', 'react-native', 'react', 'react-jsx' or 'react-jsxdev'. */,
@@ -88,9 +88,9 @@
     "/dist/**/*",
     "/src/**/*",
     "sample-test.js",
-    "hardhat.config.js",
-    "deploy/gnosisafedeploy.mjs",
-    "hardhat.config.js"
+    "hardhat.config.ts",
+    "deploy/gnosisafedeploy.ts",
+    "hardhat.config.ts"
   ],
   "files": [
     "hardhat.config.js"

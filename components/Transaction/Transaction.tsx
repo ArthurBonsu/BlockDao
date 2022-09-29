@@ -26,36 +26,6 @@ import  useSwapContext   from 'context/useSwapContext'
 import  useTransactionContext   from 'context/useTransactionContext'
 import useTransferContext   from 'context/useTransferContext'
 
-const Transaction = () => {
-
-    const { transactions, currentAccount } = useTransactionContext();
-
-
-    return (
-        <Stack spacing={6}>
-  
-  <div className="flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions">
-      <div className="flex flex-col md:p-12 py-12 px-4">
-        {currentAccount ? (
-          <h3 className="text-white text-3xl text-center my-2">
-            Latest Transactions
-          </h3>
-        ) : (
-          <h3 className="text-white text-3xl text-center my-2">
-            Connect your account to see the latest transactions
-          </h3>
-        )}
-          Transaction Details
-        <div className="flex flex-wrap justify-center items-center mt-10">
-          {[...dummyData, ...transactions].reverse().map((transaction, i) => (
-            <TransactionsCard key={i} {...transaction} />
-          ))}
-        </div>
-      </div>
-    </div>
-</Stack>
-    )
-}
 
 const TransactionsCard = ({ addressTo, addressFrom, timestamp, message, keyword, amount, url }) => {
   const gifUrl = useFetch({ keyword });
@@ -97,4 +67,36 @@ const TransactionsCard = ({ addressTo, addressFrom, timestamp, message, keyword,
     </div>
   );
 };
+const Transaction = () => {
+
+    const { transactions, currentAccount } = useTransactionContext();
+
+
+    return (
+        <Stack spacing={6}>
+  
+  <div className="flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions">
+      <div className="flex flex-col md:p-12 py-12 px-4">
+        {currentAccount ? (
+          <h3 className="text-white text-3xl text-center my-2">
+            Latest Transactions
+          </h3>
+        ) : (
+          <h3 className="text-white text-3xl text-center my-2">
+            Connect your account to see the latest transactions
+          </h3>
+        )}
+          Transaction Details
+        <div className="flex flex-wrap justify-center items-center mt-10">
+          {[...dummyData, ...transactions].reverse().map((transaction, i) => (
+            <TransactionsCard key={i} {...transaction} />
+          ))}
+        </div>
+      </div>
+    </div>
+</Stack>
+    )
+}
+
+
 export default Transaction;

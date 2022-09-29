@@ -1,4 +1,53 @@
-const networkConfig = {
+
+import hre, { ethers, upgrades } from "hardhat";
+
+
+import   { Signer, BigNumber, ContractFactory, Contract } from  "ethers";
+// import   {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
+import   { expect } from "chai";
+import   chai  from "chai";
+import   chaiaspromised  from "chai-as-promised";
+import   { Wallet } from "ethers";
+
+import   assert from 'assert';
+
+
+import  fs from 'fs';
+
+// import chai.use from 'chai-bignumber'
+
+
+// Adding Provider to the deployment 
+//We call helper from deployment
+import   useHelpers 
+from "scripts/useHelper";
+
+
+
+ import   { useState, useEffect }  from "react";
+import ReactDom from "react-dom";
+import web3 from 'web3';
+
+import  { HardhatRuntimeEnvironment } from "hardhat/types";
+import  { DeployFunction }  from "hardhat-deploy/types";
+
+
+import  {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
+
+import  Chai  from "chai";
+import  Chaiaspromised from "chai-as-promised";
+
+
+import  Assert from "assert";
+
+
+import  { TransactionRequest } from "@ethersproject/abstract-provider";
+
+import  Fs from  'fs';
+ const { deployments,getNamedAccounts,getChainId} = hre; 
+
+export const gethardhatconfig =( ) => {
+ const networkConfig = {
     // For Token providers, here we use Infura Provider
     default: {
         name: 'hardhat',
@@ -56,9 +105,9 @@ const networkConfig = {
     }
 }
 
-const developmentChains = ["hardhat", "localhost"]
+ const developmentChains = ["hardhat", "localhost"]
 
-const getNetworkIdFromName = async (networkIdName) => {
+ const getNetworkIdFromName = async (networkIdName) => {
     for (const id in networkConfig) {
         if (networkConfig[id]['name'] == networkIdName) {
             return id
@@ -75,7 +124,7 @@ const getNetworkIdFromName = async (networkIdName) => {
 // providers, web3 providers, infura provider
 // providers, web3
 
-const autoFundCheck = async (contractAddr, networkName, linkTokenAddress, additionalMessage) => {
+ const autoFundCheck = async (contractAddr, networkName, linkTokenAddress, additionalMessage) => {
     const chainId = await getChainId()
     console.log("Checking to see if contract can be auto-funded with LINK:")
     const amount = networkConfig[chainId]['fundAmount']
@@ -101,9 +150,10 @@ const autoFundCheck = async (contractAddr, networkName, linkTokenAddress, additi
     }
 }
 
-module.exports = {
-    networkConfig,
-    getNetworkIdFromName,
-    autoFundCheck,
-    developmentChains
+
+
+
+return {networkConfig,getNetworkIdFromName, developmentChains, autoFundCheck } 
 }
+export default gethardhatconfig
+

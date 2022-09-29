@@ -3,7 +3,7 @@ import   { useState, useEffect }  from "react";
 import ReactDom from "react-dom";
 import Web3 from 'web3';
 
-let  {  hre } =require  ("hardhat");
+import     hre  from  "hardhat";
 import  { HardhatRuntimeEnvironment } from "hardhat/types";
 import  { DeployFunction }  from "hardhat-deploy/types";
 
@@ -16,11 +16,11 @@ import  {ethers,utils, Wallet } from  "ethers";
 
 import  Assert from "assert";
 
-import { networkConfig, getNetworkIdFromName }  from "../utils/helper-hardhat-config";
+import { networkConfig, getNetworkIdFromName }  from "../utils/gethardhatconfig.js";
 
 import  { TransactionRequest } from "@ethersproject/abstract-provider";
 
-import  Fs from  ('fs');
+import  Fs from  'fs';
 const  ROPSTEN_NETWORK = process.env.ROPSTEN_NETWORK;
 const ROPSTEN_API = process.env.ROPSTEN_API;
 
@@ -40,8 +40,8 @@ let result;
 let gnosissafeaddress;
 
 
-const func  = async (HardhatRuntimeEnvironment) => { 
-  const { getNamedAccounts,getChainId} = HardhatRuntimeEnvironment; 
+const func  = async (hre) => { 
+  const { deployments,getNamedAccounts,getChainId} = hre; 
   const {deploy} = deployments; 
 
   const {deployer} = await getNamedAccounts(); 

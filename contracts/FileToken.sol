@@ -14,6 +14,8 @@ string private _tokensymbol;
 address private _owner;
 // We set an event for it to be easier to call sometimes admini
 event FileToken(address _fileownerset);
+event mintme(address recipient, uint amount);
+event noburnme(address recipient, uint amount); 
 // We can call initialize any name, the aim is to initialize without since Upgradeable contracts like these do not have a constructor
 // Constructors capture state variables upon first instance and are never called.We mimick with the initializer 
 // Normal convention requires calling initializer keyword but that is not great for multiargument cases like this
@@ -36,9 +38,12 @@ owner = _owner;
 */
 // These are standard ERC20 Contracts
 function mint(address recipient, uint amount) external {
+    emit mintme( recipient, amount);
+
 _mint(recipient, amount);
 }
 function burn(address recipient, uint amount) external {
+    emit noburnme( recipient, amount); 
 _burn(recipient, amount);
 }
 }
