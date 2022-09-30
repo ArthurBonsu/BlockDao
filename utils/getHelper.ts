@@ -379,7 +379,9 @@ export default{ getInfuraProvider,
   getContractEventWithListener,
   getContractEmmittedWithListener,
   getDeployedTransactionForContractFactory,
-  getWalletForInfura}
+  getWalletForInfura
+
+}
 
 
       

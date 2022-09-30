@@ -9,13 +9,8 @@ let   { Wallet  } = require ("ethers");
 
 let   assert =require ('assert');
 //import gethardhatconfig  from "../utils/gethardhatconfig.ts";
-
-
 let  fs = require('fs');
-
 // import chai.use from 'chai-bignumber'
-
-
 // Adding Provider to the deployment 
 //We call helper from deployment
 

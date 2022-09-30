@@ -131,6 +131,21 @@ export type SwapTransactionType = {
   owneraddress: string  
  }
 
+
+ export type SimpleTransferTranscations = {
+  username: string , 
+  address:string, 
+  amount:number , 
+  comment:string ,
+  timestamp:Date, 
+  receipient:string ,
+  receipients: Array<string> ,
+  txhash:string , 
+  USDprice:number,
+  paymenthash: string,
+  owneraddress: string  
+ }
+ 
  export interface TokenInfoResponse{
  type : string 
  address: string
@@ -164,7 +179,9 @@ export type SwapTransactionType = {
    APIKEY: string }
   }
 
-
+ export interface Receipients {
+  address: string 
+ }
 
 /*
  export type Tokens = {

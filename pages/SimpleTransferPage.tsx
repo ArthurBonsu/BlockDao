@@ -71,7 +71,6 @@ import useTransferContext   from 'context/useTransferContext'
 
 
     const SimpleTransferPage: FC = () => {
-
       
 const walletAddress = useEthersStore((state) => state.address)
 const walletCheckSumAddress = walletAddress ? ethers.utils.getAddress(walletAddress) : ''
