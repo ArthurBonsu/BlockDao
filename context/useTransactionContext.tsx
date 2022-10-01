@@ -83,7 +83,7 @@ const useSwapContext = () => {
   let accounts:Array<string> ;
 // Provides transaction information here 
 // Picking these values from the form 
-  const [formData, setformData] = useState<transactionParams>({username: "", address:"", amount:0, comment:"", timestamp:new Date("2019-05-27"),  
+  const [PaymentformData, setformData] = useState<transactionParams>({username: "", address:"", amount:0, comment:"", timestamp:new Date("2019-05-27"),  
   receipient:"", receipients: [],txhash:"" , USDprice:0, paymenthash: "", owneraddress:"" });
 
   const [transferformData, setTransferformData] = useState<transactionParams>({username: "", address:"", amount:0, comment:"", timestamp:new Date("2019-05-27"),  
@@ -93,16 +93,20 @@ const useSwapContext = () => {
 
   const [transactionCount, setTransactionCount] = useState(localStorage.getItem("transactionCount"));
 
-  const [transactions, setTransactions] = useState({username: "", address:"", amount:0, comment:"", timestamp:new Date("2019-05-27"),  
-  receipient:"", receipients: [],txhash:"", USDprice:0, paymenthash: ""});
 
-  const [paymenttransaction,setPayment ] = useState({});
+  const [paymenttransactionreceipt,setPayment ] = useState({});
+
   const [transfertransaction,setTransfer ] = useState({});
+  
   const [isLoading, setIsLoading] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
-  const [tokentx,setTokentx ] = useState({});
+
   const [tokentxreceipt,setTokentxReceipt ] = useState({});
   const [token]  = useState({})
+
+
+  const [fullpaymentx, setfullPaymenttx] = useState({});
+  const [fulltransfertx, setfullTransafertx] =useState({});
   
  //  const [amount, setTokenAmount] = useState(localStorage.getItem("TokenSwapAmount"));
 
@@ -110,8 +114,9 @@ const useSwapContext = () => {
  const [paidTokenamount, setPaidTokenAmount] = useState(0);  
  const [ourUSDPrice, setUSDprice] = useState(0)
  const [accountsprovided, setAccounts ] = useState([]);
+ const [paymentransactionRequest, setPaymenttransactionRequest] = useState({})
+ const [transfertransactionRequest, setTransfertransactionRequest] = useState({})
 
-  const [transactioninfocase, setTransactionInfo] = useState({});
 
  
 
@@ -139,14 +144,15 @@ try {
     console.log("This is the amount of tokens",amountoftokens );
     
    
-    const paymentamount = await SimpleTransfer.attach(address).payfee(USDprice) ;
+    const paymentamounttx = await SimpleTransfer.attach(address).payfee(USDprice) ;
     
-   const paymentreceipt =     paymentamount.wait();
+   const paymentreceipt =     paymentamounttx.wait();
    
       console.log ("Payment Fee", paymentreceipt);
 
       console.log ('Payment fee hash' +  await paymentreceipt.hash);
-    setPayment(paymentreceipt);
+    
+  
     paymentcounter +1;
      
     const filter = SimpleTransfer.filters.payfeeevent( address, USDprice);
@@ -193,9 +199,12 @@ try {
    
      setPaidTokenAmount(amount);
     
-     setPayment(transactionObject);
+     setPayment(paymentreceipt);
      
-    
+  
+     setfullPaymenttx(paymentamounttx);
+     setPaymenttransactionRequest(transactionRequest);
+
 
     sendTransaction({signer,provider,transactionObject, transactionRequest, newcontract});
     setIsPaid(true);
@@ -274,8 +283,9 @@ try {
       
 
        }
-      setTransactionInfo(transactionObject);
       
+       setfullTransafertx(submitokentx);
+    
       simpletransfercounter+1;
    
     
@@ -290,10 +300,10 @@ try {
         USDprice:USDprice,
         paymenthash: paymenthash,
         owneraddress: _theowneraddress}); 
-
+       
      sendTransaction({signer,provider,transactionObject, transactionRequest, newcontract});
      setTransferredTokenAmount(amount);
-   
+     setTransfertransactionRequest(transactionRequest);
    
       } else {
         console.log("Ethereum is not present");
@@ -390,6 +400,8 @@ try {
   }, [transactionCount]);
 
   return {
+       fullpaymentx,
+       fulltransfertx,
         sendPayment ,
         sendSimpleTransfer,
         transactionCount,
@@ -398,18 +410,20 @@ try {
         isLoading,
         sendTransaction,
         handleChange,
-        formData,
+        PaymentformData,
         transferformData,
-        transactions,
-        paymenttransaction,
+      
+        paymenttransactionreceipt,
         transfertransaction,        
         isPaid,
         tokentxreceipt,
         transferredtokenamount,
         paidTokenamount,
         ourUSDPrice,
-       accountsprovided,
-       transactioninfocase,
+       accountsprovided,        
+ paymentransactionRequest,
+ transfertransactionRequest
+     
       }
 }
 

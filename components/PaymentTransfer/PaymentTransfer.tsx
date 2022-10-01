@@ -66,42 +66,24 @@ interface PaymentTransferProps extends ButtonProps {
   txhash?:string , 
   USDprice:number,
   paymenthash: string,
-  owneraddress: string  
+  owneraddress: string , 
   onPayTransfer: ()=> void
 }
 
-
-
-
-
-const {sendPayment ,sendSimpleTransfer,transactionCount,connectWallet, currentAccount,isLoading,sendTransaction,
-    handleChange,formData,transferformData,transactions,paymenttransaction,transfertransaction,isPaid,tokentxreceipt,transferredtokenamount,
-    paidTokenamount,ourUSDPrice,accountsprovided,transactioninfocase } = useTransactionContext();
    
 // This is for the execution
 const PaymentTransfer: React.FC<PaymentTransferProps> = ({
-    username,address, amount,comment,receipient,receipients,paymenthash,USDprice, txhash,owneraddress, onPayTransfer,
+    username,address, amount,comment,receipient,paymenthash,USDprice, txhash,owneraddress, onPayTransfer,
   ...rest
 }) => {
 
 
 
+
+  const {fullpaymentx,fulltransfertx,sendPayment ,sendSimpleTransfer,transactionCount,connectWallet,  currentAccount,isLoading,
+     sendTransaction,handleChange, PaymentformData,transferformData,paymenttransactionreceipt,transfertransaction,  isPaid,
+     tokentxreceipt,transferredtokenamount,paidTokenamount,ourUSDPrice,accountsprovided,paymentransactionRequest,transfertransactionRequest} = useTransactionContext();
     
-  useEffect( onPayTransfer() => {
-   
-    setIsLoading(true);
-         
-    paymenthash = await sendPayment({ username, amount, address, USDprice, txhash, paymenthash, owneraddress});
-   
-      setIsLoading(false);
-  
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username,address, amount,comment,receipient,receipients])
-
-  
-
-
-
     const localDisclosure = useDisclosure()
     const [paymentapproved, setPaymentApproved] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -116,6 +98,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
 
 
     const [openMultiRecipient, setMultiReceipient] = useState(false); 
+    const [paymentcompleted,  setPaymentcompleted] = useState(false);
  
     const schema = yup.object({
 
@@ -151,11 +134,24 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
   
     const handleChange = (event) => { 
     isTyping
-    setValue(event.target.value)
+    setValue(event.target.value);
     !isTyping
     // Logic of token conversion must be here
   
   } 
+
+  useEffect( onPayTransfer() => {
+   
+    setIsLoading(true);
+         
+    paymenthash = await sendPayment({ username, amount, address, USDprice, txhash, paymenthash, owneraddress});
+    setPaymentcompleted(true);
+      setIsLoading(false);
+      
+  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username,address, amount,comment,receipient,receipients])
+
   
   const onMultiReceipientOpen= () => {
     if(!openMultiRecipient) {
@@ -168,25 +164,15 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
 
   }
 
-
   return (
     <Grid placeItems="center" w="full" h="100vh">
       <Box w="500px" shadow="md" p="10" borderRadius="md" bg="gray.50">
-        <Flex
-          direction="column"
-          css={{
-            gap: '20px',
-          }
-        
-        }
-        >
+     
           <Flex justifyContent="space-between" alignItems="center">
             <Text>The Paymet Transfer Solution</Text>
             
             <Button bg="blue.200" _hover={{ bg: 'blue.300' }} textColor="white" onClick={() =>{
               onMultiReceipientOpen();
-
-
               append({})
             }>
               Add Owners
@@ -211,19 +197,47 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
               <FormControl>
                 <FormLabel htmlFor="amount" fontWeight="normal">
                   Other Relevant Information
+                  <Heading as="h2" fontSize="xl" mb={0}>
+               Make Payment Before Transferring Tokens 
+               The price is now at : {USDprice} for 5 tokens
+              </Heading> 
+    <InputGroup>
+   
+    <Input  placeholder='username' {...register("username")} />
+    <InputRightAddon> </InputRightAddon>
+
+
+             
+    <Input   placeholder='address'size='sm'   {...register("address")} />
+    <InputRightAddon> 0x...</InputRightAddon>
+
+
+
+    <Heading as="h2" fontSize="xl" mb={0}>
+               Make Payment Before Transferring Tokens 
+               The price is now at : {currentUSD price} for 5 tokens
+              </Heading> 
+
+
+    <Input  placeholder='token amount'   {...register("amount")}/>
+    <InputRightAddon> +233</InputRightAddon>
+
+
+
+          <Input  placeholder='comment'  {...register("comment")} />
+    <InputRightAddon> +233</InputRightAddon> 
+
+
+ 
+    
+    <Input  type="datetime-local" placeholder='Select Date and Time'  {...register("timestamp")} />
+
+    <InputRightAddon> +233</InputRightAddon>
+    <Text>  Price of Token To Be Transferred </Text> 
+
+                
                 </FormLabel>
-                <NumberInput max={fields.length} min={1} w="90px">
-                  <NumberInputField
-                    id="treshold"
-                    key="treshold"
-                    {...register(`treshold`, { required: true })}
-                    bg="white"
-                  />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
+                
               </FormControl>
             </Flex>
 
@@ -238,8 +252,21 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
             >
               Create Safe
             </Button>
+
+
+            <Button
+              bg="blue.200"
+              _hover={{ bg: 'blue.300' }}
+              textColor="white"
+              type="submit"
+              w="full"
+              mt="20px"
+              isLoading={isSubmitting}
+            >
+              Proceed To Transfer
+            </Button>
           </form>
-        </Flex>
+        
       </Box>
     </Grid>
   )
