@@ -55,7 +55,9 @@ import queries from "@services/queries";
 
 // For finally making execution on the blockchain 
 
-
+type receipient = {
+  value: string | Array<string> 
+}
 
 interface PaymentTransferProps  {
   username: string , 
@@ -63,7 +65,7 @@ interface PaymentTransferProps  {
   amount:number , 
   comment:string ,
   timestamp?:Date, 
-  receipient:string | Array<string> ,
+  receipient:receipient ,
   txhash?:string , 
   USDprice:number,
   paymenthash: string,
@@ -169,10 +171,9 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<PaymentTransferProps>()
-  const { fields, append, remove,isDirty, isSubmitting, append, remove, touchedFields, submitCount, errors  } = useFieldArray({
+  const { fields, append, remove} = useFieldArray({
   
-    control,
-    name: 'address',
+        name: 'receipient',
   
     resolver: yupResolver(schema)
   
@@ -188,7 +189,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
   } 
 
   useEffect( onPayTransfer = () => {
-   
+    receipient.map (( item, index ) => {
     setIsLoading(true);
          
     paymenthash = await sendPayment({ username, amount, address, USDprice, txhash, paymenthash, owneraddress});
@@ -201,7 +202,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
   
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username,address, amount,comment,receipient])
-
+})
   
   const onMultiReceipientOpen= () => {
     if(!openMultiRecipient) {
@@ -237,7 +238,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
             {Boolean(fields.length === 0) && <Text>Please add owners..</Text>}
             {fields.map((field, index) => (
               <InputGroup key={field.id} size="sm">
-                <Input {...register(`receipient.${index}.value`, { required: true })} mb="5px" bg="white" />
+                <Input {...register(`receipient`, { required: true })} mb="5px" bg="white" />
                 <InputRightAddon>
                   <Text onClick={() => remove(index)} _hover={{ cursor: 'pointer' }}>
                     Remove
@@ -336,18 +337,21 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
             </Button>) )
 
             {paymentapproved} ? 
-            (
+            ( 
+              {receipient.map (( item, index ) => {
               < TransactionDisplay 
-              account = {paymentransactionRequest.address}
+              account = {PaymentformData.address}
               username = {PaymentformData.username}
-              paymenthash = {paymentransactionRequest.hash}
-              receipients= {paymentransactionRequest.to}
+              paymenthash = {paymenttransactionreceipt.hash}
+              receipients= {paymenttransactionreceipt.to}
               contractowneraddress= {paymenttransactionreceipt.to} 
               amount ={PaymentformData.amount} 
               usdPrice = {PaymentformData.usdPrice}
                
                /> 
-            ) : (
+               }) 
+               
+               }) : (
               < TransactionDisplay 
               account = {'Nothing yet'}
               username = {'Nothing yet'}

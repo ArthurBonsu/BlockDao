@@ -121,7 +121,7 @@
             "baseName": {
               "contractScope": null,
               "id": 961,
-              "name": "ResolverBase",
+              "name": "Base",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 662,
               "src": "88:12:8",
