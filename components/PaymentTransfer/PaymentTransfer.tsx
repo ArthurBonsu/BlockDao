@@ -62,8 +62,7 @@ interface PaymentTransferProps extends ButtonProps {
   amount:number , 
   comment:string ,
   timestamp?:Date, 
-  receipient:string ,
-  receipients?: Array<string> ,
+  receipient:string | Array<string> ,
   txhash?:string , 
   USDprice:number,
   paymenthash: string,
@@ -71,7 +70,7 @@ interface PaymentTransferProps extends ButtonProps {
   onPayTransfer: ()=> void
 }
 
-const receipientlist: Receipients[];
+
 
 
 
@@ -84,6 +83,25 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
     username,address, amount,comment,receipient,receipients,paymenthash,USDprice, txhash,owneraddress, onPayTransfer,
   ...rest
 }) => {
+
+
+
+    
+  useEffect( onPayTransfer() => {
+   
+    setIsLoading(true);
+         
+    paymenthash = await sendPayment({ username, amount, address, USDprice, txhash, paymenthash, owneraddress});
+   
+      setIsLoading(false);
+  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username,address, amount,comment,receipient,receipients])
+
+  
+
+
+
     const localDisclosure = useDisclosure()
     const [paymentapproved, setPaymentApproved] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -99,55 +117,39 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
 
     const [openMultiRecipient, setMultiReceipient] = useState(false); 
  
-
-    
-    
     const schema = yup.object({
 
-        username: yup.string().required(),
-        address: yup.string().required(), 
-        amount:yup.number().required(),
-        comment: yup.string().required(),
-        timestamp:yup.date().required(),
-        receipient:yup.number().required(),
-        receipients:yup.array().of(yup.string()).required(),
-        txhash:yup.string().required(),
-        USDprice:yup.number().required(),
-        paymenthash:yup.string().required(),
-      
-    }).required();
+      username: yup.string().required(),
+      address: yup.string().required(), 
+      amount:yup.number().required(),
+      comment: yup.string().required(),
+      timestamp:yup.date().required(),
+      receipient:yup.number().required(),
+      receipients:yup.array().of(yup.string()).required(),
+      txhash:yup.string().required(),
+      USDprice:yup.number().required(),
+      paymenthash:yup.string().required(),
     
-    
+  }).required();
     const {
+      control,
       register,
       handleSubmit,
-      watch,
-      // Read the formState before render to subscribe the form state through the Proxy
-      formState: {  isDirty, isSubmitting, touchedFields, submitCount, errors },
-    } = useForm<PaymentTransferProps>(
+      formState: { isSubmitting },
+    } = useForm<PaymentTransferProps>()
+    const { fields, append, remove,isDirty, isSubmitting, append, remove, touchedFields, submitCount, errors  } = useFieldArray({
     
-      {  defaultValues: 
-        {
-            username:"", 
-            address:"", 
-            amount:0 , 
-            comment:"" ,
-            timestamp:(27-09-2022),       
-            
-            receipients: [""] ,
-            txhash:"" , 
-            USDprice:0,
-            paymenthash:"",
-            owneraddress: "",
-   },
-        resolver: yupResolver(schema)
-       
-       }  );
+      control,
+      name: 'address',
     
-       const amountWatch = watch("amount")
-
-
-  const handleChange = (event) => { 
+      resolver: yupResolver(schema)
+    
+    })
+    
+      
+    
+  
+    const handleChange = (event) => { 
     isTyping
     setValue(event.target.value)
     !isTyping
@@ -164,281 +166,83 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
         setMultiReceipient(true);
     }
 
-  } 
-  
-  // the attribute should be here 
-  useEffect(() => {
-    onPayTransfer = async () => {
-        setIsLoading(true);
-         
-        paymenthash = await sendPayment({ username, amount, address, USDprice, txhash, paymenthash, owneraddress});
-       
-          setIsLoading(false);
-        }
-      
-     onPayTransfer()
-  }, [username,address, amount,comment,receipient,receipients,])
+  }
+
 
   return (
-    <Box m="5">
-      <form onSubmit={handleSubmit(()=> {     
+    <Grid placeItems="center" w="full" h="100vh">
+      <Box w="500px" shadow="md" p="10" borderRadius="md" bg="gray.50">
+        <Flex
+          direction="column"
+          css={{
+            gap: '20px',
+          }
         
-        onPayTransfer();
-        })}>
-       
-        <FormControl>
-       
-          <FormLabel htmlFor="tokenAname">Token A</FormLabel>
-       
-          <Heading as="h2" fontSize="xl" mb={0}>
-               Make Payment Before Transferring Tokens 
-               The price is now at : {currentUSD price} for 5 tokens
-              </Heading> 
-    <InputGroup>
-   
-    <Input  placeholder='username' {...register("username")} />
-    <InputRightAddon> </InputRightAddon>
+        }
+        >
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text>The Paymet Transfer Solution</Text>
+            
+            <Button bg="blue.200" _hover={{ bg: 'blue.300' }} textColor="white" onClick={() =>{
+              onMultiReceipientOpen();
 
 
-             
-    <Input   placeholder='address'size='sm'   {...register("address")} />
-    <InputRightAddon> +233</InputRightAddon>
+              append({})
+            }>
+              Add Owners
+            </Button>
+          </Flex>
+          
+          <form onSubmit={handleSubmit(()=> {onPayTransfer()})}>
+            {Boolean(fields.length === 0) && <Text>Please add owners..</Text>}
+            {fields.map((field, index) => (
+              <InputGroup key={field.id} size="sm">
+                <Input {...register(`receipient.${index}.value`, { required: true })} mb="5px" bg="white" />
+                <InputRightAddon>
+                  <Text onClick={() => remove(index)} _hover={{ cursor: 'pointer' }}>
+                    Remove
+                  </Text>
+                </InputRightAddon>
+              </InputGroup>
+            ))}
 
 
+            <Flex flexDirection="column" mt="20px">
+              <FormControl>
+                <FormLabel htmlFor="amount" fontWeight="normal">
+                  Other Relevant Information
+                </FormLabel>
+                <NumberInput max={fields.length} min={1} w="90px">
+                  <NumberInputField
+                    id="treshold"
+                    key="treshold"
+                    {...register(`treshold`, { required: true })}
+                    bg="white"
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </FormControl>
+            </Flex>
 
-    <Heading as="h2" fontSize="xl" mb={0}>
-               Make Payment Before Transferring Tokens 
-               The price is now at : {currentUSD price} for 5 tokens
-              </Heading> 
-
-
-    <Input  placeholder='token amount'   {...register("amount")}/>
-    <InputRightAddon> +233</InputRightAddon>
-
-
-
-          <Input  placeholder='comment'  {...register("comment")} />
-    <InputRightAddon> +233</InputRightAddon> 
-
-
- 
-    
-    <Input  type="datetime-local" placeholder='Select Date and Time'  {...register("timestamp")} />
-
-    <InputRightAddon> +233</InputRightAddon>
-
-
-    
-    
-    <Heading as="h2" fontSize="xl" mb={0}>
-              You can choose multiple Receipients Here
-              </Heading> 
-
-
-    <InputRightAddon> +233</InputRightAddon>
-   
-    <Button colorScheme='blue' mr={3} onClick={onMultiReceipientOpen}>
-                Click To Add Receipients
-              </Button>
-                  
-
-
- {openMultiRecipient} ?
- {receipientlist.map((item, index) => (
-
-<Stack>
-      (<Input  placeholder='receipients' {...register("receipients")} />) : 
-     (<Text> No MultiReceipients selected </Text>)
-     </Stack>
-
- <option key={item.tokenname} value={`ListOfTokens.${index}.tokenname`}>
- {`receipientlist.${index}.tokenname`}
- </option>
-                               
-             )             
-             )
-          }
-
-     
-  
-    <Input  placeholder='txhash' {...register("txhash")} />
-    
-    <InputRightAddon> +233</InputRightAddon>
-
-    <Input  placeholder='USDprice' {...register("USDprice")} />
-    
-    <InputRightAddon> +233</InputRightAddon>
-
-    <Input  placeholder='paymenthash' {...register("paymenthash")} />
-    
-    <InputRightAddon> +233</InputRightAddon>
-    <Input  placeholder='owneraddress' {...register("owneraddress")} />
-    
-    <InputRightAddon> +233</InputRightAddon>
-  </InputGroup> 
-
-
-
-         {ListOfTokens.map((item, index) => (
-                <option key={item.tokenname} value={`ListOfTokens.${index}.tokenname`}>
-                  {`ListOfTokens.${index}.tokenname`}
-                </option>
-                               
-             )             
-             )
-          }
-             </Input> 
-
-           
-           {errors && errors.tokenAname && (
-            <FormHelperText color="red">
-              {errors.tokenAname.message && errors.tokenAname.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-
-        <FormControl>
-          <FormLabel htmlFor="symbolA">Symbol A</FormLabel>
-       
-          <Select icon={<RiArrowDownSLine />} placeholder='Select Token Symbol' id="symbolA"  {...register("symbolA") } >
-             
-             
-             {ListOfTokens.map((item, index) => (
-                   <option key={item.symbol} value={`ListOfTokens.${index}.symbol`}>
-                     {`ListOfTokens.${index}.symbol`}
-                   </option>
-                                  
-                )             
-                )
-             }
-                </Select> 
-         
-         
-          {errors && errors.symbolA && (
-            <FormHelperText color="red">
-              {errors.symbolA.message && errors.symbolA.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-    
-        <FormControl>
-          <FormLabel htmlFor="tokenBname">TokenB</FormLabel>
-          <Select icon={<RiArrowDownSLine />} placeholder='Select Token Symbol' id="tokenBname"  {...register("tokenBname") } >
-             
-             
-             {ListOfTokens.map((item, index) => (
-                   <option key={item.tokenname} value={`ListOfTokens.${index}.tokenname`}>
-                     {`ListOfTokens.${index}.tokenname`}
-                   </option>
-                                  
-                )             
-                )
-             }
-                </Select> 
-          {errors && errors.tokenBname && (
-            <FormHelperText color="red">
-              {errors.tokenBname.message && errors.tokenBname.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-        <FormControl>
-          <FormLabel htmlFor="symbolB">SymbolB</FormLabel>
-          <Select icon={<RiArrowDownSLine />} placeholder='Select Token Symbol' id="symbolB"  {...register("symbolB") } >
-             
-             
-             {ListOfTokens.map((item, index) => (
-                   <option key={item.symbol} value={`ListOfTokens.${index}.symbol`}>
-                     {`ListOfTokens.${index}.symbol`}
-                   </option>
-                                  
-                )             
-                )
-             }
-                </Select> 
-          {errors && errors.symbolB && (
-            <FormHelperText color="red">
-              {errors.symbolB.message && errors.symbolB.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor="amount">Amount</FormLabel>
-
-      <NumberInput  step={5} defaultValue={0} min={0} max={100}   >
-  <NumberInputField />
-  <NumberInputStepper {...register("tokenBname")}>
-    <NumberIncrementStepper />
-    <NumberDecrementStepper />
-  </NumberInputStepper>
-</NumberInput>
-
-      {errors && errors.amount && (
-            <FormHelperText color="red">
-              {errors.amount.message && errors.amount.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-        <Stack direction='column'> 
-       <Wrap spacing={4}>
-       <WrapItem>
-      <Button colorScheme='pink'  onClick={()=> { 
-      
-          if(!tokenchosen){
-            setTokenChosen(true); 
-          }
-          else {
-            setTokenChosen(false);
-          }
-      }}>{!tokenchosen?  'ABC' : 'TKA'}</Button>
-      </WrapItem>
-   
-       </Wrap>
-       </Stack>
-
-        
-        <Button type="submit" colorScheme="blue">
-          Submit
-        </Button>
-      </form>
-      {!isSubmitting}? 
-      <Accordion defaultIndex={[0]} allowMultiple>
-      <AccordionItem>
-    <h2>
-      <AccordionButton>
-      (<AccordionIcon />
-      </AccordionButton>
-      
-    </h2>
-    <AccordionPanel pb={4}>
-    <TransactionDisplay 
-    account ={accountsretrieved}
-    tokenAname={transactions.tokenAname}
-    symbolA={transactions.tokenBname}
-    tokenBname={transactions.tokenBname}
-    symbolB={transactions.symbolB}
-    amount={transactions.amount}
-    newamount={transactions.newamount}
-    swaphash={transactions.swaphash}
-    from={accountsretrieved}
-    to={''}
-    
-    />
-
-    </AccordionPanel>
-  </AccordionItem>): (<Text> Transaction not complete</Text>)
-
-  
-</Accordion>
-  
-    </Box>
-  
-  
-  
-  );
+            <Button
+              bg="blue.200"
+              _hover={{ bg: 'blue.300' }}
+              textColor="white"
+              type="submit"
+              w="full"
+              mt="20px"
+              isLoading={isSubmitting}
+            >
+              Create Safe
+            </Button>
+          </form>
+        </Flex>
+      </Box>
+    </Grid>
+  )
 
 }
 
