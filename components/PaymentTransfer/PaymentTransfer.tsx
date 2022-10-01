@@ -72,6 +72,52 @@ interface PaymentTransferProps  {
 }
 
 const pathname = "../SimpleTransfer";
+
+const TransactionDisplay = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+  return (
+<Stack spacing={6}>
+    <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
+    <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+   <br>
+  <Text as='b'> Username</Text>
+  <Text as='b'>{username}</Text>
+  </br>
+
+  <br>
+  <Text as='b'> Payment Hash</Text>
+  <Text as='b'>{paymenthash}</Text>
+  </br>
+
+
+  {receipients.map((item ,index) =>{
+    <>
+    <Text as='b'> Receipient:  {index} </Text>
+   <Text as='b'>First Token </Text>
+ </>
+  } )
+}
+   <br>
+  <Text as='b'> Owner Address  </Text>
+  <Text as='b'>{contractowneraddress} </Text>
+  </br>
+ 
+  <>
+  <Text as='b'>Amount of Tokens </Text>
+  <Text as='b'>{amount} </Text>
+  </>
+  
+  <>
+  <Text as='b'>Price </Text>
+  <Text as='b'>{usdPrice} </Text>
+  </>
+</Box>
+    </Stack>
+  )
+}
+
+
+
+
    
 // This is for the execution
 const PaymentTransfer: React.FC<PaymentTransferProps> = (
@@ -81,10 +127,10 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
 
 
 
-
   const {fullpaymentx,fulltransfertx,sendPayment ,sendSimpleTransfer,transactionCount,connectWallet,  currentAccount,
-     sendTransaction,handleChange, PaymentformData,transferformData,paymenttransactionreceipt,transfertransaction,  isPaid,
-     tokentxreceipt,transferredtokenamount,paidTokenamount,ourUSDPrice,accountsprovided,paymentransactionRequest,transfertransactionRequest} = useTransactionContext();
+    sendTransaction, PaymentformData,transferformData,paymenttransactionreceipt,transfertransaction,  isPaid,
+    tokentxreceipt,transferredtokenamount,paidTokenamount,ourUSDPrice,accountsprovided,paymentransactionRequest,transfertransactionRequest} = useTransactionContext();
+
     
     const localDisclosure = useDisclosure()
     const [paymentapproved, setPaymentApproved] = useState(false)
@@ -133,7 +179,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
   })
     
   
-    const handleChange = (event) => { 
+   const handleChange = (event) => { 
     isTyping
     setValue(event.target.value);
     !isTyping
@@ -146,6 +192,9 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
     setIsLoading(true);
          
     paymenthash = await sendPayment({ username, amount, address, USDprice, txhash, paymenthash, owneraddress});
+  
+  
+  
     setPaymentcompleted(true);
       setIsLoading(false);
       
@@ -168,12 +217,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
       router.push(pathname);
 
     }
-
-  
-
-
-
-
+   
   return (
     <Grid placeItems="center" w="full" h="100vh">
       <Box w="500px" shadow="md" p="10" borderRadius="md" bg="gray.50">
@@ -184,7 +228,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
             <Button bg="blue.200" _hover={{ bg: 'blue.300' }} textColor="white" onClick={() =>{
               onMultiReceipientOpen();
               append({})
-            }>
+            }}>
               Add Owners
             </Button>
           </Flex>
@@ -193,7 +237,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
             {Boolean(fields.length === 0) && <Text>Please add owners..</Text>}
             {fields.map((field, index) => (
               <InputGroup key={field.id} size="sm">
-                <Input {...register(`fields.${index}.receipient`, { required: true })} mb="5px" bg="white" />
+                <Input {...register(`receipient.${index}.value`, { required: true })} mb="5px" bg="white" />
                 <InputRightAddon>
                   <Text onClick={() => remove(index)} _hover={{ cursor: 'pointer' }}>
                     Remove
@@ -225,7 +269,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
 
     <Heading as="h2" fontSize="xl" mb={0}>
                Make Payment Before Transferring Tokens 
-               The price is now at : {currentUSD price} for 5 tokens
+               The price is now at : {USDprice} for 5 tokens
               </Heading> 
 
 
@@ -245,7 +289,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
     <InputRightAddon> +233</InputRightAddon>
     <Text>  Price of Token To Be Transferred </Text> 
 
-                
+    </InputGroup>   
                 </FormLabel>
                 
               </FormControl>
@@ -290,10 +334,39 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = (
             >
              Transfer Locked
             </Button>) )
+
+            {paymentapproved} ? 
+            (
+              < TransactionDisplay 
+              account = {paymentransactionRequest.address}
+              username = {PaymentformData.username}
+              paymenthash = {paymentransactionRequest.hash}
+              receipients= {paymentransactionRequest.to}
+              contractowneraddress= {paymenttransactionreceipt.to} 
+              amount ={PaymentformData.amount} 
+              usdPrice = {PaymentformData.usdPrice}
+               
+               /> 
+            ) : (
+              < TransactionDisplay 
+              account = {'Nothing yet'}
+              username = {'Nothing yet'}
+              paymenthash = {'Nothing yet'}
+              receipients= {'Nothing yet'}
+              contractowneraddress= {'Nothing yet'}
+              amount ={'Nothing yet'}
+              usdPrice = {'Nothing yet'}
+               
+               /> 
+            )
           </form>
         
       </Box>
+       <Stack> 
+      
+       </Stack>
     </Grid>
+   
   )
 
 }

@@ -420,9 +420,9 @@ try {
         transferredtokenamount,
         paidTokenamount,
         ourUSDPrice,
-       accountsprovided,        
- paymentransactionRequest,
- transfertransactionRequest
+       accountsprovided,
+        
+
      
       }
 }
