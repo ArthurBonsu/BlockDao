@@ -7,7 +7,8 @@ import { Button, ButtonProps, Flex, useDisclosure, AlertDialog,Alert,  AlertDial
   NumberInput,NumberInputField, NumberIncrementStepper,NumberDecrementStepper,NumberInputStepper, Input,IconButton, AlertIcon, Grid,
     Box,  Text,  InputGroup,  InputRightAddon, FormHelperText,Wrap,  WrapItem, VisuallyHidden, VisuallyHiddenInput, Accordion,AccordionItem,AccordionButton,
     AccordionPanel, AccordionIcon } from '@chakra-ui/react'
-    
+    import { useRouter } from 'next/router'
+import { ComponentType, FC } from 'react'
 import {RiArrowDownSLine} from 'react-icons/all'
 import {  createSwapFormSchema, createSwapTransferFormSchema,  } from '../../validation'
   import { BsShieldFillCheck } from "react-icons/bs";
@@ -56,7 +57,7 @@ import queries from "@services/queries";
 
 
 
-interface PaymentTransferProps extends ButtonProps {
+interface PaymentTransferProps  {
   username: string , 
   address:string, 
   amount:number , 
@@ -70,17 +71,18 @@ interface PaymentTransferProps extends ButtonProps {
   onPayTransfer: ()=> void
 }
 
+const pathname = "../SimpleTransfer";
    
 // This is for the execution
-const PaymentTransfer: React.FC<PaymentTransferProps> = ({
+const PaymentTransfer: React.FC<PaymentTransferProps> = (
     username,address, amount,comment,receipient,paymenthash,USDprice, txhash,owneraddress, onPayTransfer,
   ...rest
-}) => {
+) => {
 
 
 
 
-  const {fullpaymentx,fulltransfertx,sendPayment ,sendSimpleTransfer,transactionCount,connectWallet,  currentAccount,isLoading,
+  const {fullpaymentx,fulltransfertx,sendPayment ,sendSimpleTransfer,transactionCount,connectWallet,  currentAccount,
      sendTransaction,handleChange, PaymentformData,transferformData,paymenttransactionreceipt,transfertransaction,  isPaid,
      tokentxreceipt,transferredtokenamount,paidTokenamount,ourUSDPrice,accountsprovided,paymentransactionRequest,transfertransactionRequest} = useTransactionContext();
     
@@ -114,22 +116,21 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
       paymenthash:yup.string().required(),
     
   }).required();
-    const {
-      control,
-      register,
-      handleSubmit,
-      formState: { isSubmitting },
-    } = useForm<PaymentTransferProps>()
-    const { fields, append, remove,isDirty, isSubmitting, append, remove, touchedFields, submitCount, errors  } = useFieldArray({
-    
-      control,
-      name: 'address',
-    
-      resolver: yupResolver(schema)
-    
-    })
-    
-      
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<PaymentTransferProps>()
+  const { fields, append, remove,isDirty, isSubmitting, append, remove, touchedFields, submitCount, errors  } = useFieldArray({
+  
+    control,
+    name: 'address',
+  
+    resolver: yupResolver(schema)
+  
+  })
     
   
     const handleChange = (event) => { 
@@ -140,7 +141,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
   
   } 
 
-  useEffect( onPayTransfer() => {
+  useEffect( onPayTransfer = () => {
    
     setIsLoading(true);
          
@@ -150,7 +151,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
       
   
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username,address, amount,comment,receipient,receipients])
+  }, [username,address, amount,comment,receipient])
 
   
   const onMultiReceipientOpen= () => {
@@ -162,7 +163,16 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
         setMultiReceipient(true);
     }
 
-  }
+    const onMoveToTransfer =  () =>{
+      const router = useRouter();
+      router.push(pathname);
+
+    }
+
+  
+
+
+
 
   return (
     <Grid placeItems="center" w="full" h="100vh">
@@ -183,7 +193,7 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
             {Boolean(fields.length === 0) && <Text>Please add owners..</Text>}
             {fields.map((field, index) => (
               <InputGroup key={field.id} size="sm">
-                <Input {...register(`receipient.${index}.value`, { required: true })} mb="5px" bg="white" />
+                <Input {...register(`fields.${index}.receipient`, { required: true })} mb="5px" bg="white" />
                 <InputRightAddon>
                   <Text onClick={() => remove(index)} _hover={{ cursor: 'pointer' }}>
                     Remove
@@ -253,8 +263,8 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
               Create Safe
             </Button>
 
-
-            <Button
+            {paymentcompleted} ? 
+            (<Button
               bg="blue.200"
               _hover={{ bg: 'blue.300' }}
               textColor="white"
@@ -262,9 +272,24 @@ const PaymentTransfer: React.FC<PaymentTransferProps> = ({
               w="full"
               mt="20px"
               isLoading={isSubmitting}
+              onClick= {() => {
+                onMoveToTransfer();
+              }}
             >
               Proceed To Transfer
-            </Button>
+            </Button>) : 
+            (  (<Button
+              bg="blue.200"
+              _hover={{ bg: 'blue.300' }}
+              textColor="white"
+              type="submit"
+              w="full"
+              mt="20px"
+              isLoading={isSubmitting}
+             
+            >
+             Transfer Locked
+            </Button>) )
           </form>
         
       </Box>
