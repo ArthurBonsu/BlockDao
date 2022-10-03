@@ -216,12 +216,10 @@ const CSVImportAndExport = () => {
         const  highesttoken = max(timestampstore); 
      });
 
-     const getLatestToken = ( ) => {
-        const filter  = ( groupedrowentery: GroupedSheetEntery,     rowobject: setRowItem   )  => {
+     const getLatestToken = (timegiven ) => {
+        const filter  = ( groupedentery: GroupedSheetEntery,     rowobject: setRowItem   )  => {
 
-            const groupedtimestamp = groupedrowentery
-            .filter(({ type }) => type === included[status] || 'executed')
-            .map((item) => item[date[status]])
+            const groupedtimestamp = groupedentery.map((item) => item[date[status]])
             .sort()
             .filter(Boolean)[0]
              
