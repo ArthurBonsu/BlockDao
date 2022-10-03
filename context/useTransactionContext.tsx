@@ -3,8 +3,8 @@ import { ContractFactory, ethers, Signer, BigNumber,Contract } from "ethers";
 
 import { contractABI, contractAddress,FileTokenUpgradeableABI,  FileTokenUpgradeableV2ABI, FileTokenUpgradeableAddress,
   FileTokenUpgradeableV2Address } from "../constants/constants";
-import { PaymentTransactions  } from 'types/index'
-import { SimpleTransferTranscations  } from 'types/index'
+import { PaymentTransactions,   } from 'types/index'
+import { SimpleTransferTranscations, Receipients  } from 'types/index'
 const chai  = require("chai");
 const BN =require('bn.js')
 chai.use(require('chai-bn')(BN));
@@ -13,7 +13,7 @@ const { Wallet } = require("ethers");
 const { ethereum } = window;
 require("@nomiclabs/hardhat-web3")
 import {Provider} from "@ethersproject/providers"
-import useTransactionContext from "./useTransferContext";
+
 import   { TransactionRequest }  from "@ethersproject/abstract-provider";
 
 interface transactionParams {
@@ -22,8 +22,9 @@ interface transactionParams {
   amount: number 
   comment?: string 
   timestamp: Date
-  receipient:string 
+  receipient:string,
   receipients?: Array<string>
+  
   txhash: string 
   USDprice?:  number 
   paymenthash?: string 
@@ -56,8 +57,11 @@ transactionRequest?:TransactionRequest
 newcontract?: Contract
 }
 
+  let receipient = " "; 
  let _theowneraddress= "0x06Da25591CdF58758C4b3aBbFf18B092e4380B65";
-const useSwapContext = () => {
+ const transferobjectAArray:  Array<Object> = [{}]; 
+
+const useTransactionContext = () => {
     
  const createEthereumContract = () => {
   // Also like passing API key to infura this is normally done for wallet cases and things that work like Infura
@@ -87,7 +91,7 @@ const useSwapContext = () => {
   receipient:"", receipients: [],txhash:"" , USDprice:0, paymenthash: "", owneraddress:"" });
 
   const [transferformData, setTransferformData] = useState<transactionParams>({username: "", address:"", amount:0, comment:"", timestamp:new Date("2019-05-27"),  
-  receipient:"", receipients: [],txhash:"" , USDprice:0, paymenthash: "", owneraddress:"" });
+  receipient:"", receipients: ['0x'],txhash:"" , USDprice:0, paymenthash: "", owneraddress:"" });
 
   const [currentAccount, setCurrentAccount] = useState("");
 
@@ -118,6 +122,7 @@ const useSwapContext = () => {
  const [transfertransactionRequest, setTransfertransactionRequest] = useState({})
 
 
+
  
 
   const handleChange = (e, name) => {
@@ -130,7 +135,7 @@ const useSwapContext = () => {
   // Using Option 2 for Etherscan
   
   
-  const sendPayment = async ({ username, amount, address, USDprice, txhash, paymenthash, owneraddress, newcontract }: transactionParams) => {
+  const sendPayment = async ({ username, amount, address, USDprice, txhash, paymenthash, owneraddress, newcontract, timestamp, receipients }: transactionParams) => {
    setIsPaid(false);
     const paymentcounter: number =0;
 try {
@@ -176,7 +181,7 @@ try {
         comment:"",
         timestamp:new Date("2019-05-27"), 
         receipient:"",
-        receipients: [],
+        receipients: [""],
         txhash:txhash, 
         USDprice:USDprice,
         paymenthash: paymenthash,
@@ -233,7 +238,7 @@ try {
           receipient = receipients[index];
 
         });
-      }
+      
  
         const submitokentx  = await SimpleTransfer.transferFrom(address,receipient, amountoftokens) ;
      
@@ -304,7 +309,8 @@ try {
      sendTransaction({signer,provider,transactionObject, transactionRequest, newcontract});
      setTransferredTokenAmount(amount);
      setTransfertransactionRequest(transactionRequest);
-   
+     transferobjectAArray.push(transactionObject);
+    }
       } else {
         console.log("Ethereum is not present");
       }
@@ -400,6 +406,7 @@ try {
   }, [transactionCount]);
 
   return {
+        transferobjectAArray, 
        fullpaymentx,
        fulltransfertx,
         sendPayment ,
@@ -420,7 +427,7 @@ try {
         transferredtokenamount,
         paidTokenamount,
         ourUSDPrice,
-       accountsprovided,
+       accountsprovided
         
 
      

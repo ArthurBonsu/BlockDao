@@ -193,3 +193,6 @@ export type SwapTransactionType = {
   date: string
  }
 */
+type myreceipients = {
+  value:  string 
+}

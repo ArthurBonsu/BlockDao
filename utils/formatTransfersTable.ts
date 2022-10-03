@@ -79,12 +79,13 @@ export interface Response {
 // format 
 export const format = (response: Response, address: string, thresholdParams: number | undefined): Return[] => {
  
- 
+   // included status
   const included: Record<string, 'pending' | 'executed'> = {
     pending: 'pending',
     executed: 'executed',
   }
-
+ 
+   // date status 
   const date: Record<string, 'executionDate' | 'submissionDate'> = {
     rejected: 'executionDate',
     executed: 'executionDate',
@@ -140,6 +141,7 @@ export const format = (response: Response, address: string, thresholdParams: num
 
       // returns
       //tries to get the status from the groups, remember group is copied into Objects
+      // pending executed
       const asses: Asses = { pending, executed, rejected }
       const status = Object.keys(asses).filter((statusState: string) => asses[statusState])[0]
       const timestamp = groupResult[key]
