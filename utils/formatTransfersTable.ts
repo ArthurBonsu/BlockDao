@@ -80,12 +80,14 @@ export interface Response {
 export const format = (response: Response, address: string, thresholdParams: number | undefined): Return[] => {
  
    // included status
+   // an object
   const included: Record<string, 'pending' | 'executed'> = {
     pending: 'pending',
     executed: 'executed',
   }
  
-   // date status 
+   // date status
+   // an object 
   const date: Record<string, 'executionDate' | 'submissionDate'> = {
     rejected: 'executionDate',
     executed: 'executionDate',
