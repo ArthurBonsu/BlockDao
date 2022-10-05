@@ -39,10 +39,10 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
     export  type  GroupedSheetEntery  = Record<string, TransactionDesc[]>
      export type setRowItem = Record<string, TransactionDesc> 
       
-      const datedTransactions = Array<TransactionDesc>();
+    export  const datedTransactions = Array<TransactionDesc>();
 
     
-     const filterdetails =  ( groupSheet: GroupedSheetEntery) => {
+ export  const UsePortFolioContext = ( groupSheet: GroupedSheetEntery) => {
       const groupsheetkeys = Object.keys(groupSheet);
       groupsheetkeys.map ((key, index) => {
      
@@ -226,8 +226,16 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
        return  datedbalancedamount ;
       }
       
-      
-
-      })
-      }
     
+    
+  
+  return {
+     getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
+  getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
+  getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfTokenType,
+  getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
+  getDatedPortFolioValueOfTokenType
+  }
+
+ 
+export default UsePortFolioContext
