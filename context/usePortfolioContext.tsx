@@ -142,7 +142,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
        return depositvalue; 
    }
 
-   const getPortFolioValueOfTokenType = (token: string) => 
+   const getPortFolioValueOfSpecifiedToken = (token: string) => 
    {
      const withdrawalamount = getWithdrawnAmountOfTokenType( token);
      const depositedamount   = getDepositedAmountOfTokenType(token); 
@@ -215,15 +215,26 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
        return  datedbalancedamount ;
       }
     
-          
+      const getDatedPortFolioValueOfAllThreeTypes = (date: DateType, token: string) => 
+      { 
+        const BTCDatedPV = getDatedPortFolioValueOfTokenType(date,'BTC');
+        const ETHDatedPV = getDatedPortFolioValueOfTokenType(date,'ETH');
+        const XRPDatedPV = getDatedPortFolioValueOfTokenType(date, 'XRP');
+        
+     return  {BTCDatedPV, ETHDatedPV, XRPDatedPV} ;
+    }
+  
+      
+
+
       return {mapKeygetter,
      getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
   getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
-  getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfTokenType,
+  getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfSpecifiedToken,
   getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
-  getDatedPortFolioValueOfTokenType
+  getDatedPortFolioValueOfTokenType,getDatedPortFolioValueOfAllThreeTypes
   } 
-}
+ }
   
   export default usePortFolioContext
        

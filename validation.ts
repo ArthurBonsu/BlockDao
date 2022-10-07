@@ -1,6 +1,7 @@
 import { CreateTransferInput } from 'types'
 import { InferType, number, object, SchemaOf, string, array } from 'yup'
 import { TokenTypesDetails, CreateSwapTransferInput } from 'types'
+import {CSVProps} from 'types/index'
 
 // This sets the schema for validation we use yep for this 
 export const createTransferFormSchema: SchemaOf<{ recipients: Array<Omit<CreateTransferInput, 'accessType'>> }> =
@@ -53,3 +54,20 @@ export const createSwapTransferFormSchema: SchemaOf<{ swaptokendetails:CreateSwa
 
   
 export type TcreateSwapTransferFormSchema = InferType<typeof createSwapTransferFormSchema>
+
+export const createCSCFormSchema: SchemaOf<{ csvinputdetails:CSVProps}> =
+  object().shape({
+  rows: array<object>().required('Rows must be supplied.'),
+  date : string().required('Date is required.'), 
+  pvvalue: string().required('Portfolio value is required.'),
+  timestamp:string().required('Timestamp is required.'),
+  transaction_type:string().required('Transaction is required.'),
+  token: string().required('Token is required.'),
+  amount: string().required('Amount is required.'),
+       
+
+  }).required()
+
+
+  
+export type TcreateCSCFormSchemaValues = InferType<typeof createCSCFormSchema>

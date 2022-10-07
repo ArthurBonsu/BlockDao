@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { ComponentType, FC } from 'react'
-
+import { dateAtTime,  timeAgo,   dateFormat, DateType } from '@utils/formatDate'
 
 export interface TransfersType {
   count: Number
@@ -193,6 +193,40 @@ export type SwapTransactionType = {
   date: string
  }
 */
-type myreceipients = {
+export type myreceipients = {
   value:  string 
+}
+
+
+export type RowType = {
+  timestamp: string
+  transaction_type: string 
+  token: string 
+  amount: string 
+
+ }
+
+ export type TokensSelected =  {
+  name: string 
+  symbol: string 
+ } 
+ export interface CSVProps {
+  rows: RowType[],
+  date? : string, 
+  pvvalue?: string,
+  timestamp?: string,
+  transaction_type:string,
+  token: string,
+  amount: string
+}
+
+
+export type CSVPropsType=  {
+  rows: RowType[],
+  date? : string, 
+  pvvalue?: string,
+  timestamp?: string,
+  transaction_type:string,
+  token: string,
+  amount: string
 }

@@ -47,27 +47,12 @@ import  useTransactionContext   from 'context/useTransactionContext'
 import useTransferContext   from 'context/useTransferContext'
 
 import * as yup from "yup";
-
-
-
 import { setValues } from 'framer-motion/types/render/utils/setters'
 import Router from 'next/router'
 import { useQuery } from 'react-query'
 import queries from "@services/queries";
-
-
-type RowType = {
-  timestamp: string
-  transaction_type: string 
-  token: string 
-  amount: string 
-
- }
-
- type TokensSelected =  {
-  name: string 
-  symbol: string 
- } 
+import { RowType,TokensSelected, CSVProps, CSVPropsType } from "types/index";
+import {  createCSCFormSchema, TcreateCSCFormSchemaValues  } from '../../validation'
 
 
  const SelectedTokenList : TokensSelected[] = [
@@ -84,26 +69,8 @@ type RowType = {
   symbol: 'XRP',
  },
 ]
-interface CSVProps {
-  rows: RowType[],
-  date? : DateType, 
-  pvvalue?: number,
-  timestamp?: string,
-  transaction_type:string,
-  token: string,
-  amount: string
-}
 
 
-type CSVPropsType=  {
-  rows: RowType[],
-  date? : DateType, 
-  pvvalue?: number,
-  timestamp?: string,
-  transaction_type:string,
-  token: string,
-  amount: string
-}
 let timestampstore: Array<String> ; let transaction_typestore: Array<string>; let tokenstore: Array<String>; 
 let amountstore:Array<string> ;  let timestampgiven, _thetransactiontype, tokengained,amountpushed ;
 let rows: Array<RowType>;
@@ -293,12 +260,15 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
 
 
     const [porfoliodetails, setPortfolioDetails    ] = useState([]);
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [_tokenselect, setTokenSelected] = useState(false); 
+    const [dateselect, setDatePicker] = useState(false); 
 
-    const schema = yup.object({
+    const schema = yup.object().shape({
 
     
-      rows: yup.number().required(),
+      rows: yup.array<RowType>().required(),
       date? : yup.string().required(), 
       pvvalue:yup.string().required(),
       timestamp: yup.string().required(),
@@ -309,13 +279,16 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
 
     const {
      
+      
       watch,
       // Read the formState before render to subscribe the form state through the Proxy
       formState: {  isDirty, touchedFields, submitCount },
     } = useForm<CSVProps>(
-      
-      {  defaultValues: 
+{ 
+  resolver: yupResolver(schema),
+        defaultValues: 
         {
+     
           rows: rows,
           date? : date, 
           pvvalue?: pvvalue,
@@ -323,11 +296,8 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
           transaction_type:'WITHDRAWAL',
           token: 'ETH',
           amount: '0',
-        },
-        resolver: yupResolver(schema),
-        
-       
-       }  );
+          },  
+        } );
        const amountWatch = watch("amount")
   
       const handleChange = (event) => { 
@@ -346,6 +316,7 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
     
     const {
       control,
+     
       register,
       handleSubmit,
       formState: { isSubmitting },
@@ -354,7 +325,7 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
       control,
    
           name: 'rows',
-          control
+     
           
         },
          
@@ -363,9 +334,9 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
  
  const {getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
   getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
-  getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfTokenType,
+  getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfSpecifiedToken,
   getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
-  getDatedPortFolioValueOfTokenType}   = usePortFolioContext();
+  getDatedPortFolioValueOfTokenType,getDatedPortFolioValueOfAllThreeTypes}   = usePortFolioContext();
 
   
   
@@ -420,6 +391,71 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
     
       }
   
+        // BUTTON REVEALS
+      // onTokenSelected 
+      // onDatePicked
+
+      // function getters
+      // onGetLPVs
+      // onGetLPVPerToken
+      // onGetLSpecifiedTokenPV
+      // onGetLSpecifiedDateAndTokenPV
+
+
+
+      const onGetLPVs =() => {
+
+
+
+      }
+ const onTokenSelected =() => {
+  setIsLoading(true);
+  setTokenSelected(true);
+
+  return (
+    <>
+<div className="min-h-screen">
+  <div className='gradient-bg-welcome'>  
+<Text > You can  </Text>
+            
+ 
+<Button onClick={() => {
+  
+  onGetLPVPerToken} }    >SignIn </Button>
+
+</div>                            
+</div>
+</>
+  )
+  setIsLoading(false);
+ }
+
+ 
+ const onDatePicked =() => {
+  setIsLoading(true);
+  setTokenSelected(true);
+
+  return (
+    <>
+<div className="min-h-screen">
+  <div className='gradient-bg-welcome'>  
+<Text > You can  </Text>
+            
+ 
+<Button onClick={() => {
+  
+  onGetLPVPerToken} }    >SignIn </Button>
+
+</div>                            
+</div>
+</>
+  )
+  setIsLoading(false);
+ }
+
+
+ }
+     
     
 
 return (
@@ -477,9 +513,7 @@ return (
                 </option>
                    
              
-             )
-             
-             )
+             ) )
                         
               }
       </Select>
@@ -491,24 +525,9 @@ return (
           <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokennameError?.message} mx={2}>
             <FormLabel> TokenLists</FormLabel>
             <>     
-            <Select {...register("token")} placeholder="Select option" isReadOnly={isLoading} onSelect={ manageSelection} 
-             >
-               
-               
-                  {SelectedTokenList.map((item, index) => (
-                <option key={item.name} value={`SelectedTokenList.${index}.symbol`}>
-                  {`SelectedTokenList.${index}.symbol`}
-                </option>
-                   
-             
-             )
-             
-             )
-                        
-              }
-      </Select>
-                   
-           <FormErrorMessage>{tokennameError?.message}</FormErrorMessage>
+            <Input  placeholder="Select Date and Time"  size="md"  type="datetime-local"  {...register("date")}/>
+                       
+             <FormErrorMessage>{tokennameError?.message}</FormErrorMessage>
             </>
           </FormControl> 
       
