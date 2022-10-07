@@ -266,7 +266,7 @@ const {
     },
     resolver: yupResolver(schema)
    
-   }  );
+   } );
 
    const amountWatch = watch("amount")
 const handleChange = (event) => { 

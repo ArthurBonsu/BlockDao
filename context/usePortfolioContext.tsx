@@ -40,17 +40,20 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
      export type setRowItem = Record<string, TransactionDesc> 
       
     export  const datedTransactions = Array<TransactionDesc>();
+  let groupSheet: GroupedSheetEntery;
+  let key:string;
+    const usePortFolioContext = () => {
 
-    
- export  const UsePortFolioContext = ( groupSheet: GroupedSheetEntery) => {
+        const mapKeygetter = ( ) => {
       const groupsheetkeys = Object.keys(groupSheet);
-      groupsheetkeys.map ((key, index) => {
-     
-  // For Time 
+       groupsheetkeys.map ((item, index) => {
+       key = item; 
+      })
+      
+        }
+ 
    const getMaxtimestampToken = () => {
-    let maxtimestamp; let timeoftimestamp: string;
-   
-    
+    let maxtimestamp; let timeoftimestamp: string;      
        
         const listoftimestamp = groupSheet[key];
         const maximumtimestamp =   listoftimestamp.reduce((prevtransaction, curtransaction) => {
@@ -58,16 +61,13 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
           return  maxtimestamp=    prevtransaction['timestamp'] > curtransaction['timestamp'] ? prevtransaction :  curtransaction ;
         });
 
-         
-        
+                
         return timeoftimestamp;
       }
        
       const getMaxtimestampPerToken = (tokentypeselected: string ) => {
-        let maxtimestamp; let timeoftimestamp: string;
-       
-        
-           
+        let maxtimestamp; let timeoftimestamp: string;      
+                   
             const listoftimestamp = groupSheet[key];
           const selectedTokens =   listoftimestamp.filter(({ token }) => token === tokentypeselected);
             const maximumtimestamp =   selectedTokens.reduce((prevtransaction, curtransaction) => {
@@ -75,8 +75,6 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
               return  maxtimestamp=    prevtransaction['timestamp'] > curtransaction['timestamp'] ? prevtransaction :  curtransaction ;
             });
     
-             
-            
             return timeoftimestamp;
           }
        
@@ -85,9 +83,8 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
           const tokenoptions: TokenSet = { ETH:"ETH", BTC: "BTC", XRP: "XRP" }
           const tokentypeselected = Object.keys(tokenoptions).filter((tokenexpected) => tokenoptions[tokenexpected])[0]
         return   tokentypeselected
-
-        }
-     
+      }
+                
         const getAllTokenOfParticularType = (tokenchoice: string ) => {
    
         const chosentokentype = selectTokenType(tokenchoice); 
@@ -95,10 +92,6 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
         .filter(({ token }) => token === tokentype[chosentokentype])
          return tokensofXType; 
          }
-
-
-     
-
 
          const getLatestTokenOfType = (tokenchoice: string) => {
           const newtime = getMaxtimestampPerToken(tokenchoice);
@@ -158,11 +151,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
   return  balancedamount ;
 }
         //getLatestTokenOfAllThreeTypes
-        //getPortfolioPerToken
-           
- 
-
-
+        //getPortfolioPerToken     
 
           const getPortFolioWithDate = (date: DateType, tokenstring: string ) => 
           {        
@@ -177,7 +166,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
                  datedTransactions.push(transactions);
                 return datedTransactions; 
               }
-            })
+            });
               return datedTransactions;
            
             }
@@ -195,7 +184,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
              withdrawnvalue =   withdrawnvalue + Number(currentamount.amount);
          
                  return  summation;
-           })
+           });
       
             return withdrawnvalue; 
            }
@@ -212,7 +201,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
              depositvalue =   depositvalue + Number(currentamount.amount);
          
                  return  summation;
-           })
+           });
       
             return depositvalue; 
         }
@@ -225,17 +214,24 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
           
        return  datedbalancedamount ;
       }
-      
     
-    
-  
-  return {
+          
+      return {mapKeygetter,
      getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
   getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
   getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfTokenType,
   getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
   getDatedPortFolioValueOfTokenType
-  }
+  } 
+}
+  
+  export default usePortFolioContext
+       
 
- 
-export default UsePortFolioContext
+  
+
+
+  
+
+
+     

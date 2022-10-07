@@ -1,162 +1,375 @@
-import React, { useState } from "react";  
+import React,{ useCallback, useState, useEffect,ComponentType, FC, } from 'react' 
 import { read, utils, writeFile } from 'xlsx';
-import { Button, ButtonProps, Flex, useDisclosure, AlertDialog,Alert,  AlertDialogBody,  AlertDialogCloseButton,  AlertDialogContent,
-    AlertDialogFooter,  AlertDialogHeader,  AlertDialogOverlay,   UseDisclosureReturn, Select,FormErrorMessage, FormControl, FormLabel,
+import { Stack, Heading, Button, ButtonProps, Flex, useDisclosure, AlertDialog,Alert,  AlertDialogBody,  AlertDialogCloseButton,  AlertDialogContent,
+    AlertDialogFooter,  chakra, AlertDialogHeader,  AlertDialogOverlay,   UseDisclosureReturn, Select,FormErrorMessage, FormControl, FormLabel,
     NumberInput,NumberInputField, NumberIncrementStepper,NumberDecrementStepper,NumberInputStepper, Input,IconButton, AlertIcon, Grid,
       Box,  Text,  InputGroup,  InputRightAddon, FormHelperText,Wrap,  WrapItem, VisuallyHidden, VisuallyHiddenInput, Accordion,AccordionItem,AccordionButton,
       AccordionPanel, AccordionIcon } from '@chakra-ui/react'
   import { max } from "lodash";
 import { mintmeEvent } from "typechain/contracts/FileToken";
-import { dateAtTime } from '@utils/formatDate' 
-import  usePortfolioContext   from 'context/usePortfolioContext'
+import  usePortFolioContext   from 'context/usePortfolioContext'
+import { dateAtTime,  timeAgo,   dateFormat, DateType } from '@utils/formatDate'
+import { useFormContext, useFieldArray ,useForm, Controller } from 'react-hook-form'
+import { ethers } from 'ethers'
+const hre = require("hardhat")
+import { yupResolver } from '@hookform/resolvers/yup';
+    import { useRouter } from 'next/router'
+import {RiArrowDownSLine} from 'react-icons/all'
+import {  createSwapFormSchema, createSwapTransferFormSchema,  } from '../../validation'
+  import { BsShieldFillCheck } from "react-icons/bs";
+import { BiSearchAlt } from "react-icons/bi";
+import { RiHeart2Fill } from "react-icons/ri";
+import { PlusSmIcon, MinusSmIcon } from '@heroicons/react/outline'
+import { CreateSwapTransferInput, CreateTransferInput, SimpleTokenList } from 'types'
+import supportedNetworkOptions from '@constants/supportedNetworkOptions'
+//STORES
+import { useSwapStore  } from '@stores/ContextStores/useSwapStore'
+import { useEthersStore  } from 'stores/ethersStore'
+import { useSafeStore  } from 'stores/safeStore'
+import { useHashTransactionStore  } from 'stores/transactionStore'
+import { useUserStore  } from 'stores/userStore'
+import { Receipients  } from 'types/index'
 
+//HOOKS
+import  useEthers   from 'hooks/useEthers'
+import  useFetch   from 'hooks/useFetch'
+import  useLoadSafe   from 'hooks/useLoadSafe'
+import  useSafe   from 'hooks/useSafe'
+import useSafeSdk   from 'hooks/useSafeSdk'
+import useTransactions   from 'hooks/useTransactions'
+
+import useSafeInfo from 'hooks/useSafe'
+//Context 
+import  useCrowdsourceContext   from 'context/useCrowdsourceContext'
+import  useDaoContext   from 'context/useDaoContext'
+import  useSwapContext   from 'context/useSwapContext'
+import  useTransactionContext   from 'context/useTransactionContext'
+import useTransferContext   from 'context/useTransferContext'
+
+import * as yup from "yup";
+
+
+
+import { setValues } from 'framer-motion/types/render/utils/setters'
+import Router from 'next/router'
+import { useQuery } from 'react-query'
+import queries from "@services/queries";
+
+
+type RowType = {
+  timestamp: string
+  transaction_type: string 
+  token: string 
+  amount: string 
+
+ }
+
+ type TokensSelected =  {
+  name: string 
+  symbol: string 
+ } 
+
+
+ const SelectedTokenList : TokensSelected[] = [
+  {
+  name: 'Bitcoin',
+  symbol: 'BTC',
+ },
+ {
+  name: 'Ethereum',
+  symbol: 'ETH',
+ },
+ {
+  name: 'XRP',
+  symbol: 'XRP',
+ },
+]
+interface CSVProps {
+  rows: RowType[],
+  date? : DateType, 
+  pvvalue?: number,
+  timestamp?: string,
+  transaction_type:string,
+  token: string,
+  amount: string
+}
+
+
+type CSVPropsType=  {
+  rows: RowType[],
+  date? : DateType, 
+  pvvalue?: number,
+  timestamp?: string,
+  transaction_type:string,
+  token: string,
+  amount: string
+}
 let timestampstore: Array<String> ; let transaction_typestore: Array<string>; let tokenstore: Array<String>; 
-let amountstore:Array<string> ; 
+let amountstore:Array<string> ;  let timestampgiven, _thetransactiontype, tokengained,amountpushed ;
+let rows: Array<RowType>;
+ 
 
-
-      const LatestPV = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+      const PVPerTokens = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+                   
+        return (
+      <Stack spacing={6}>
+          <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
+          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+         <br>
+        <Text as='b'> Username</Text>
+        <Text as='b'>{username}</Text>
+        </br>
       
+        <br>
+        <Text as='b'> Payment Hash</Text>
+        <Text as='b'>{paymenthash}</Text>
+        </br>
+      
+      
+        {receipients.map((item ,index) =>{
+          <>
+          <Text as='b'> Receipient:  {index} </Text>
+         <Text as='b'>First Token </Text>
+       </>
+        } )
+      }
+         <br>
+        <Text as='b'> Owner Address  </Text>
+        <Text as='b'>{contractowneraddress} </Text>
+        </br>
+       
+        <>
+        <Text as='b'>Amount of Tokens </Text>
+        <Text as='b'>{amount} </Text>
+        </>
+        
+        <>
+        <Text as='b'>Price </Text>
+        <Text as='b'>{usdPrice} </Text>
+        </>
+      </Box>
+          </Stack>
+        )
+      }
+      
+
+      const PVForToken = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+       
+       
+       
+        return (
+      <Stack spacing={6}>
+          <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
+          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+         <br>
+        <Text as='b'> Username</Text>
+        <Text as='b'>{username}</Text>
+        </br>
+      
+        <br>
+        <Text as='b'> Payment Hash</Text>
+        <Text as='b'>{paymenthash}</Text>
+        </br>
+      
+      
+        {receipients.map((item ,index) =>{
+          <>
+          <Text as='b'> Receipient:  {index} </Text>
+         <Text as='b'>First Token </Text>
+       </>
+        } )
+      }
+         <br>
+        <Text as='b'> Owner Address  </Text>
+        <Text as='b'>{contractowneraddress} </Text>
+        </br>
+       
+        <>
+        <Text as='b'>Amount of Tokens </Text>
+        <Text as='b'>{amount} </Text>
+        </>
+        
+        <>
+        <Text as='b'>Price </Text>
+        <Text as='b'>{usdPrice} </Text>
+        </>
+      </Box>
+          </Stack>
+        )
+      }
+      
+      const DatePerTokens = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+       
+       
+       
+        return (
+      <Stack spacing={6}>
+          <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
+          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+         <br>
+        <Text as='b'> Username</Text>
+        <Text as='b'>{username}</Text>
+        </br>
+      
+        <br>
+        <Text as='b'> Payment Hash</Text>
+        <Text as='b'>{paymenthash}</Text>
+        </br>
+      
+      
+        {receipients.map((item ,index) =>{
+          <>
+          <Text as='b'> Receipient:  {index} </Text>
+         <Text as='b'>First Token </Text>
+       </>
+        } )
+      }
+         <br>
+        <Text as='b'> Owner Address  </Text>
+        <Text as='b'>{contractowneraddress} </Text>
+        </br>
+       
+        <>
+        <Text as='b'>Amount of Tokens </Text>
+        <Text as='b'>{amount} </Text>
+        </>
+        
+        <>
+        <Text as='b'>Price </Text>
+        <Text as='b'>{usdPrice} </Text>
+        </>
+      </Box>
+          </Stack>
+        )
+      }
+      
+      const DatePerToken = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+       
+       
+       
+        return (
+      <Stack spacing={6}>
+          <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
+          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+         <br>
+        <Text as='b'> Username</Text>
+        <Text as='b'>{username}</Text>
+        </br>
+      
+        <br>
+        <Text as='b'> Payment Hash</Text>
+        <Text as='b'>{paymenthash}</Text>
+        </br>
+      
+      
+        {receipients.map((item ,index) =>{
+          <>
+          <Text as='b'> Receipient:  {index} </Text>
+         <Text as='b'>First Token </Text>
+       </>
+        } )
+      }
+         <br>
+        <Text as='b'> Owner Address  </Text>
+        <Text as='b'>{contractowneraddress} </Text>
+        </br>
+       
+        <>
+        <Text as='b'>Amount of Tokens </Text>
+        <Text as='b'>{amount} </Text>
+        </>
+        
+        <>
+        <Text as='b'>Price </Text>
+        <Text as='b'>{usdPrice} </Text>
+        </>
+      </Box>
+          </Stack>
+        )
+      }
+      
+
+const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}: CSVProps )=> {
+
+
+    const [porfoliodetails, setPortfolioDetails    ] = useState([]);
+    const [value, setValue] = useState('')
+
+    const schema = yup.object({
+
+    
+      rows: yup.number().required(),
+      date? : yup.string().required(), 
+      pvvalue:yup.string().required(),
+      timestamp: yup.string().required(),
+      transaction_type:yup.string().required(),
+      token:yup.string().required(),
+      amount:yup.string().required(),
+    }).required();
+
+    const {
+     
+      watch,
+      // Read the formState before render to subscribe the form state through the Proxy
+      formState: {  isDirty, touchedFields, submitCount },
+    } = useForm<CSVProps>(
+      
+      {  defaultValues: 
+        {
+          rows: rows,
+          date? : date, 
+          pvvalue?: pvvalue,
+          timestamp?: timestamp,
+          transaction_type:'WITHDRAWAL',
+          token: 'ETH',
+          amount: '0',
+        },
+        resolver: yupResolver(schema),
+        
+       
+       }  );
+       const amountWatch = watch("amount")
+  
+      const handleChange = (event) => { 
+     
+        setValue(event.target.value)
+       
+        // Logic of token conversion must be here
+      
+      }
+    const {
+  
+      formState: { errors },      
+     
+    } = useFormContext<CSVProps>()
+    
+    
+    const {
+      control,
+      register,
+      handleSubmit,
+      formState: { isSubmitting },
+    } = useForm<CSVProps>()
+    const { fields, append, remove} = useFieldArray({
+      control,
+   
+          name: 'rows',
+          control
+          
+        },
          
-      
-        return (
-      <Stack spacing={6}>
-          <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
-         <br>
-        <Text as='b'> Username</Text>
-        <Text as='b'>{username}</Text>
-        </br>
-      
-        <br>
-        <Text as='b'> Payment Hash</Text>
-        <Text as='b'>{paymenthash}</Text>
-        </br>
-      
-      
-        {receipients.map((item ,index) =>{
-          <>
-          <Text as='b'> Receipient:  {index} </Text>
-         <Text as='b'>First Token </Text>
-       </>
-        } )
-      }
-         <br>
-        <Text as='b'> Owner Address  </Text>
-        <Text as='b'>{contractowneraddress} </Text>
-        </br>
-       
-        <>
-        <Text as='b'>Amount of Tokens </Text>
-        <Text as='b'>{amount} </Text>
-        </>
-        
-        <>
-        <Text as='b'>Price </Text>
-        <Text as='b'>{usdPrice} </Text>
-        </>
-      </Box>
-          </Stack>
-        )
-      }
-      
+   )
+  
+ 
+ const {getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
+  getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
+  getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfTokenType,
+  getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
+  getDatedPortFolioValueOfTokenType}   = usePortFolioContext();
 
-      const LatestPVPerToken = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
-       
-       
-       
-        return (
-      <Stack spacing={6}>
-          <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
-         <br>
-        <Text as='b'> Username</Text>
-        <Text as='b'>{username}</Text>
-        </br>
-      
-        <br>
-        <Text as='b'> Payment Hash</Text>
-        <Text as='b'>{paymenthash}</Text>
-        </br>
-      
-      
-        {receipients.map((item ,index) =>{
-          <>
-          <Text as='b'> Receipient:  {index} </Text>
-         <Text as='b'>First Token </Text>
-       </>
-        } )
-      }
-         <br>
-        <Text as='b'> Owner Address  </Text>
-        <Text as='b'>{contractowneraddress} </Text>
-        </br>
-       
-        <>
-        <Text as='b'>Amount of Tokens </Text>
-        <Text as='b'>{amount} </Text>
-        </>
-        
-        <>
-        <Text as='b'>Price </Text>
-        <Text as='b'>{usdPrice} </Text>
-        </>
-      </Box>
-          </Stack>
-        )
-      }
-      
-      const DatePerPV = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
-       
-       
-       
-        return (
-      <Stack spacing={6}>
-          <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
-         <br>
-        <Text as='b'> Username</Text>
-        <Text as='b'>{username}</Text>
-        </br>
-      
-        <br>
-        <Text as='b'> Payment Hash</Text>
-        <Text as='b'>{paymenthash}</Text>
-        </br>
-      
-      
-        {receipients.map((item ,index) =>{
-          <>
-          <Text as='b'> Receipient:  {index} </Text>
-         <Text as='b'>First Token </Text>
-       </>
-        } )
-      }
-         <br>
-        <Text as='b'> Owner Address  </Text>
-        <Text as='b'>{contractowneraddress} </Text>
-        </br>
-       
-        <>
-        <Text as='b'>Amount of Tokens </Text>
-        <Text as='b'>{amount} </Text>
-        </>
-        
-        <>
-        <Text as='b'>Price </Text>
-        <Text as='b'>{usdPrice} </Text>
-        </>
-      </Box>
-          </Stack>
-        )
-      }
-      
-        
-const CSVImportAndExport = () => {
-    const [porfoliodetails, setPortfolioDetails
-    ] = useState([]);
-  const   {TransactionType,TransactionDesc, GroupedRows, GroupedSheetEntery, setRowItem}  = usePortfolioContext();
-
-    const handleImport = ($event) => {
+  
+  
+  const handleImport = ($event) => {
         const files = $event.target.files;
         if (files.length) {
             const file = files[0];
@@ -168,11 +381,11 @@ const CSVImportAndExport = () => {
                       //read sheet 1 to json
                 if (sheets.length) { 
                     // JSON LIST 
-                    const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);             
+                    rows= utils.sheet_to_json(wb.Sheets[sheets[0]]);             
                     setPortfolioDetails(rows);
                     // Map is used to retrieve values of array of objects
                     // so we have all content in an array for an easy search
-                    
+                   
                       // RETRIEVING JSON VALUES AND PUTTING INTO ARRAY
                     porfoliodetails.map((item, index) => {
                        
@@ -191,8 +404,6 @@ const CSVImportAndExport = () => {
         }
     }
       
-
-
     const handleExport = () => {
         const headings = [[
             'timestamp',
@@ -207,294 +418,157 @@ const CSVImportAndExport = () => {
         utils.book_append_sheet(wb, ws, 'Transaction CSV');
         writeFile(wb, 'Transaction CSV.xlsx');
     
+      }
+  
     
-     const getlatestTimestamp = ( ) => {
-       
-      
-        timestampstore.map((index, item ) =>{
+
+return (
+  <form onSubmit={handleSubmit(()=> {CSVSubmit( {rows, date,pvvalue,timestamp,transaction_type,token,amount})})}>
+  <chakra.form py={2}>
+    
+  
+   {fields.map((item, index) => {
+           const rowsError = errors.rows
+          const amountError = errors.amount
+          const dateError = errors.date
+          const pvvalueError = errors.pvvalue
+          const timestampError = errors.timestamp
+          const transaction_type = errors.transaction_type
+          const token  = errors.token
+          const isLastIndex = fields.length - 1 === index
+         const isLastItem = fields.length - 1 === index
+
+      return (
+        <Flex flexDirection="row" py={4} key={item.id}>
          
-        const  highesttoken = max(timestampstore); 
-     });
-
-     const getLatestToken = (timegiven ) => {
-        const filter  = ( groupedentery: GroupedSheetEntery,     rowobject: setRowItem   )  => {
-
-            const groupedtimestamp = groupedentery.map((item) => item[date[status]])
-            .sort()
-            .filter(Boolean)[0]
-             
-    
-    
-         
-
-    }
-
-    }
-
-    return (
-        <>
-            <div className="row mb-2 mt-5">
-                <div className="col-sm-6 offset-3">
-                    <div className="row">
-                        <div className="col-md-6">
-                            <div className="input-group">
-                                <div className="custom-file">
-                                    <input type="file" name="file" className="custom-file-input" id="inputGroupFile" required onChange={handleImport}
-                                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
-                                    <label className="custom-file-label" htmlFor="inputGroupFile">Choose file</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <button onClick={handleExport} className="btn btn-primary float-right">
-                                Export Transactions <i className="fa fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-sm-6 offset-3">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Timestamp</th>
-                                <th scope="col">Transaction Type</th>
-                                <th scope="col">Token</th>
-                                <th scope="col">Amount</th>
-                         
-                            </tr>
-                        </thead>
-                        <tbody> 
-                                {
-                                    porfoliodetails.length
-                                    ?
-                                    porfoliodetails.map((item, index) => (
-                                            <tr key={index}>                                            
-                                            <th scope="row">{// shifting to the next line after collums
-                                             index + 1 }</th>
-                                            <td>{ item.timestamp }</td>
-                                            <td>{ item.transaction_type }</td>
-                                            <td>{ item.token }</td>
-                                            <td><span className="badge bg-warning text-dark">{ item.amount }</span></td>
-                                        </tr> 
-                                    ))
-                                    :
-                                    <tr>
-                                        <Text> No movies found  </Text>
-                                    </tr> 
-                                }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <Box m="5">
-      <form onSubmit={handleSubmit(()=> {onSubmit(tokenAname, symbolA,tokenBname,symbolB, amount)})}>
        
-        <FormControl>
-       
-          <FormLabel htmlFor="tokenAname">Token A</FormLabel>
-       
-          <Select icon={<RiArrowDownSLine />} placeholder='Select Tokenname' id="tokenAname"  {...register("tokenAname") } >
-             
-             
-          {ListOfTokens.map((item, index) => (
-                <option key={item.tokenname} value={`ListOfTokens.${index}.tokenname`}>
-                  {`ListOfTokens.${index}.tokenname`}
+          <FormControl id={`tokenlist.${index}.amount`} w="150px" isInvalid={!!amountError?.message} mx={2}>
+            <FormLabel htmlFor="amount">Amount</FormLabel>
+            <NumberInput
+              {...register("amount" )}
+              id={"amount"}
+              step={0.01}
+              precision={2}
+              min={0}
+              max={undefined}
+              onChange={handleChange}
+              isReadOnly={isLoading}
+            >
+              <NumberInputField name={"amount"} placeholder="0.00" />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+            <FormErrorMessage>{amountError?.message}</FormErrorMessage>
+          </FormControl>
+
+
+          <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokennameError?.message} mx={2}>
+            <FormLabel> TokenLists</FormLabel>
+            <>     
+            <Select {...register("token")} placeholder="Select option" isReadOnly={isLoading} onSelect={ manageSelection} 
+             >
+               
+               
+                  {SelectedTokenList.map((item, index) => (
+                <option key={item.name} value={`SelectedTokenList.${index}.symbol`}>
+                  {`SelectedTokenList.${index}.symbol`}
                 </option>
-                               
-             )             
-             )
-          }
-             </Select> 
-
-           
-           {errors && errors.tokenAname && (
-            <FormHelperText color="red">
-              {errors.tokenAname.message && errors.tokenAname.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-
-        <FormControl>
-          <FormLabel htmlFor="symbolA">Symbol A</FormLabel>
-       
-          <Select icon={<RiArrowDownSLine />} placeholder='Select Token Symbol' id="symbolA"  {...register("symbolA") } >
-             
-             
-             {ListOfTokens.map((item, index) => (
-                   <option key={item.symbol} value={`ListOfTokens.${index}.symbol`}>
-                     {`ListOfTokens.${index}.symbol`}
-                   </option>
-                                  
-                )             
-                )
-             }
-                </Select> 
-         
-         
-          {errors && errors.symbolA && (
-            <FormHelperText color="red">
-              {errors.symbolA.message && errors.symbolA.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-    
-        <FormControl>
-          <FormLabel htmlFor="tokenBname">TokenB</FormLabel>
-          <Select icon={<RiArrowDownSLine />} placeholder='Select Token Symbol' id="tokenBname"  {...register("tokenBname") } >
-             
-             
-             {ListOfTokens.map((item, index) => (
-                   <option key={item.tokenname} value={`ListOfTokens.${index}.tokenname`}>
-                     {`ListOfTokens.${index}.tokenname`}
-                   </option>
-                                  
-                )             
-                )
-             }
-                </Select> 
-          {errors && errors.tokenBname && (
-            <FormHelperText color="red">
-              {errors.tokenBname.message && errors.tokenBname.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-        <FormControl>
-          <FormLabel htmlFor="symbolB">SymbolB</FormLabel>
-          <Select icon={<RiArrowDownSLine />} placeholder='Select Token Symbol' id="symbolB"  {...register("symbolB") } >
-             
-             
-             {ListOfTokens.map((item, index) => (
-                   <option key={item.symbol} value={`ListOfTokens.${index}.symbol`}>
-                     {`ListOfTokens.${index}.symbol`}
-                   </option>
-                                  
-                )             
-                )
-             }
-                </Select> 
-          {errors && errors.symbolB && (
-            <FormHelperText color="red">
-              {errors.symbolB.message && errors.symbolB.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-        <FormControl>
-          <FormLabel htmlFor="amount">Amount</FormLabel>
-
-      <NumberInput  step={5} defaultValue={0} min={0} max={100}   >
-  <NumberInputField />
-  <NumberInputStepper {...register("tokenBname")}>
-    <NumberIncrementStepper />
-    <NumberDecrementStepper />
-  </NumberInputStepper>
-</NumberInput>
-
-      {errors && errors.amount && (
-            <FormHelperText color="red">
-              {errors.amount.message && errors.amount.message}
-            </FormHelperText>
-          )}
-        </FormControl>
-
-        <Stack direction='column'> 
-       <Wrap spacing={4}>
-       <WrapItem>
-      <Button colorScheme='pink'  onClick={()=> { 
-      
-          if(!tokenchosen){
-            setTokenChosen(true); 
-          }
-          else {
-            setTokenChosen(false);
-          }
-      }}>{!tokenchosen?  'ABC' : 'TKA'}</Button>
-      </WrapItem>
-   
-       </Wrap>
-       </Stack>
-
-        
-        <Button type="submit" colorScheme="blue">
-          Submit
-        </Button>
-      </form>
-      {!isSubmitting}? 
-      <Accordion defaultIndex={[0]} allowMultiple>
-      <AccordionItem>
-    <h2>
-      <AccordionButton>
-      (<AccordionIcon />
-      </AccordionButton>
-      
-    </h2>
-    <AccordionPanel pb={4}>
-    <TransactionDisplay 
-    account ={accountsretrieved}
-    tokenAname={transactions.tokenAname}
-    symbolA={transactions.tokenBname}
-    tokenBname={transactions.tokenBname}
-    symbolB={transactions.symbolB}
-    amount={transactions.amount}
-    newamount={transactions.newamount}
-    swaphash={transactions.swaphash}
-    from={accountsretrieved}
-    to={''}
-    
-    />
-
-    </AccordionPanel>
-  </AccordionItem>): (<Text> Transaction not complete</Text>)
-
-  
-</Accordion>
-  
-    </Box>
-  
-            <Button
-              bg="blue.200"
-              _hover={{ bg: 'blue.300' }}
-              textColor="white"
-              type="submit"
-              w="full"
-              mt="20px"
-              isLoading={isSubmitting}
-            >
-             Load All Sheet 
-            </Button>
-
-
-            <Button
-              bg="blue.200"
-              _hover={{ bg: 'blue.300' }}
-              textColor="white"
-              type="submit"
-              w="full"
-              mt="20px"
-              isLoading={isSubmitting}
-            >
-             Load All Sheet 
-            </Button>
-
-            <Button
-              bg="blue.200"
-              _hover={{ bg: 'blue.300' }}
-              textColor="white"
-              type="submit"
-              w="full"
-              mt="20px"
-              isLoading={isSubmitting}
-            >
-             Load All Sheet 
-            </Button>
-        </>
                    
-    );
+             
+             )
+             
+             )
+                        
+              }
+      </Select>
+                   
+           <FormErrorMessage>{tokennameError?.message}</FormErrorMessage>
+            </>
+          </FormControl> 
+      
+          <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokennameError?.message} mx={2}>
+            <FormLabel> TokenLists</FormLabel>
+            <>     
+            <Select {...register("token")} placeholder="Select option" isReadOnly={isLoading} onSelect={ manageSelection} 
+             >
+               
+               
+                  {SelectedTokenList.map((item, index) => (
+                <option key={item.name} value={`SelectedTokenList.${index}.symbol`}>
+                  {`SelectedTokenList.${index}.symbol`}
+                </option>
+                   
+             
+             )
+             
+             )
+                        
+              }
+      </Select>
+                   
+           <FormErrorMessage>{tokennameError?.message}</FormErrorMessage>
+            </>
+          </FormControl> 
+      
+        </Flex>
+      )
+    })}
+      <Stack direction='row' spacing={4}>
+       
+       <Button
+       isLoading
+       loadingText={isLoading? 'Reconnecting Metamask' : 'Connected'}  
+       colorScheme='teal'
+        variant='outline'
+        onClick={()=> {              
+       return(
+         <>
+        <AppAlertDialog
+         isLoading={isLoading}
+         handleSubmit={() =>{ onConnect()
+         setIsLoading(false)}}
+         header="Connect Metamask"
+         body="Press Connect To Retry to Connect To Your Metamask Again"
+         disclosure={localDisclosure}
+         /// An Onclose Event or function 
+         customOnClose={() => {
+           localDisclosure.onClose()
+           setIsLoading(false)
+           
+         }}
+      
+       />
+       
+       </>
+       ) 
+     
+     }
+   }
+>         
+Connect Metamask
+</Button>
+</Stack>   
+
+<Stack direction='row' spacing={4}>
+
+  <Button
+    isLoading
+    loadingText='Setting Up Metamask'
+    colorScheme='teal'
+    variant='outline'
+    onSubmit={CreateMultisigAlert}
+  >
+    Submit
+    
+  </Button>
+
+</Stack>
+  </chakra.form>
+  </form>
+)
+
 };
 
 export default CSVImportAndExport
