@@ -74,9 +74,9 @@ import {  createCSCFormSchema, TcreateCSCFormSchemaValues  } from '../../validat
 let timestampstore: Array<String> ; let transaction_typestore: Array<string>; let tokenstore: Array<String>; 
 let amountstore:Array<string> ;  let timestampgiven, _thetransactiontype, tokengained,amountpushed ;
 let rows: Array<RowType>;
- 
+let onTokenSelected, onDatePicked; 
 
-      const PVPerTokens = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+      const ExtractCSVAndPV = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
                    
         return (
       <Stack spacing={6}>
@@ -269,7 +269,7 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
 
     
       rows: yup.array<RowType>().required(),
-      date? : yup.string().required(), 
+      date : yup.string().required(), 
       pvvalue:yup.string().required(),
       timestamp: yup.string().required(),
       transaction_type:yup.string().required(),
@@ -290,9 +290,9 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
         {
      
           rows: rows,
-          date? : date, 
-          pvvalue?: pvvalue,
-          timestamp?: timestamp,
+          date : date, 
+          pvvalue: pvvalue,
+          timestamp: timestamp,
           transaction_type:'WITHDRAWAL',
           token: 'ETH',
           amount: '0',
@@ -332,14 +332,51 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
    )
   
  
- const {getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
-  getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
+ const {  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
   getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfSpecifiedToken,
   getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
   getDatedPortFolioValueOfTokenType,getDatedPortFolioValueOfAllThreeTypes}   = usePortFolioContext();
 
   
   
+    
+
+  
+  const  onGetLPVs = async() => {
+    const allLPV = getLatestTokenOfAllThreeTypes(); 
+    return allLPV;
+    // LPVToBeBuiltHere
+
+ }
+
+   
+    const onGetLPerToken = async(token) => {
+      
+      if(!_tokenselect){
+     const  LPVOfToken =  getLatestTokenOfType(token);
+         setTokenSelected(false); 
+        return LPVOfToken;
+      } }
+   
+     
+     const onGetTokenWithDate = async(date, token) => {
+      const tokenWithDate =  getDatedPortFolioValueOfTokenType(date, token);
+        return  tokenWithDate;
+     }
+
+
+     const onGetDateOfAllTokens = async(date) => {
+      if(!dateselect){
+      const datedAllTokens =  getDatedPortFolioValueOfAllThreeTypes(date);
+      setDatePicker(false);
+        return onGetTokenWithDate;
+      }}
+     useEffect(() => {
+     onGetLPVs()
+    
+
+    }, [rows, date,pvvalue,timestamp,transaction_type,token,amount])
+
   const handleImport = ($event) => {
         const files = $event.target.files;
         if (files.length) {
@@ -401,62 +438,56 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
       // onGetLSpecifiedTokenPV
       // onGetLSpecifiedDateAndTokenPV
 
+      onDatePicked =() => {
+        setIsLoading(true);
+        setDatePicker(true);
+        setIsLoading(false);
+        return (
+          <>
+      <div className="min-h-screen">
+        <div className='gradient-bg-welcome'>  
+      <Text >  You can get the LP of your selected Date And Token </Text>
+                  
+       
+      <Button onClick={() => {
+        
+        onGetTokenWithDate} 
+        
+        }    >Get Dated LP </Button>
+      
+      </div>                            
+      </div>
+      </>
+        )
+       
+       }
 
-
-      const onGetLPVs =() => {
-
-
-
-      }
- const onTokenSelected =() => {
-  setIsLoading(true);
-  setTokenSelected(true);
-
-  return (
-    <>
-<div className="min-h-screen">
-  <div className='gradient-bg-welcome'>  
-<Text > You can  </Text>
-            
- 
-<Button onClick={() => {
-  
-  onGetLPVPerToken} }    >SignIn </Button>
-
-</div>                            
-</div>
-</>
-  )
-  setIsLoading(false);
- }
-
- 
- const onDatePicked =() => {
-  setIsLoading(true);
-  setTokenSelected(true);
-
-  return (
-    <>
-<div className="min-h-screen">
-  <div className='gradient-bg-welcome'>  
-<Text > You can  </Text>
-            
- 
-<Button onClick={() => {
-  
-  onGetLPVPerToken} }    >SignIn </Button>
-
-</div>                            
-</div>
-</>
-  )
-  setIsLoading(false);
- }
-
-
- }
      
-    
+ onTokenSelected =() => {
+  setIsLoading(true);
+  setTokenSelected(true);
+  setIsLoading(false);
+  return (
+    <>
+<div className="min-h-screen">
+  <div className='gradient-bg-welcome'>  
+<Text > You can get the LP of your selected Token  </Text>
+            
+ 
+<Button onClick={() => {
+  onGetLPerToken
+  
+  } }    >Get Token LP </Button>
+
+</div>                            
+</div>
+</>
+  )
+
+ }
+ 
+
+}
 
 return (
   <form onSubmit={handleSubmit(()=> {CSVSubmit( {rows, date,pvvalue,timestamp,transaction_type,token,amount})})}>
@@ -470,40 +501,17 @@ return (
           const pvvalueError = errors.pvvalue
           const timestampError = errors.timestamp
           const transaction_type = errors.transaction_type
-          const token  = errors.token
+          const tokenError  = errors.token
           const isLastIndex = fields.length - 1 === index
          const isLastItem = fields.length - 1 === index
 
       return (
         <Flex flexDirection="row" py={4} key={item.id}>
          
-       
-          <FormControl id={`tokenlist.${index}.amount`} w="150px" isInvalid={!!amountError?.message} mx={2}>
-            <FormLabel htmlFor="amount">Amount</FormLabel>
-            <NumberInput
-              {...register("amount" )}
-              id={"amount"}
-              step={0.01}
-              precision={2}
-              min={0}
-              max={undefined}
-              onChange={handleChange}
-              isReadOnly={isLoading}
-            >
-              <NumberInputField name={"amount"} placeholder="0.00" />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-            <FormErrorMessage>{amountError?.message}</FormErrorMessage>
-          </FormControl>
-
-
-          <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokennameError?.message} mx={2}>
+           <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokenError?.message} mx={2}>
             <FormLabel> TokenLists</FormLabel>
             <>     
-            <Select {...register("token")} placeholder="Select option" isReadOnly={isLoading} onSelect={ manageSelection} 
+            <Select {...register("token")} placeholder="Select option" isReadOnly={isLoading} onSelect={()=> { onTokenSelected()}} 
              >
                
                
@@ -518,16 +526,16 @@ return (
               }
       </Select>
                    
-           <FormErrorMessage>{tokennameError?.message}</FormErrorMessage>
+           <FormErrorMessage>{tokenError?.message}</FormErrorMessage>
             </>
           </FormControl> 
       
-          <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokennameError?.message} mx={2}>
+          <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokenError?.message} mx={2}>
             <FormLabel> TokenLists</FormLabel>
             <>     
-            <Input  placeholder="Select Date and Time"  size="md"  type="datetime-local"  {...register("date")}/>
+            <Input  placeholder="Select Date and Time"  size="md"  type="datetime-local" onSelect={()=> {onDatePicked()}} {...register("date")}/>
                        
-             <FormErrorMessage>{tokennameError?.message}</FormErrorMessage>
+             <FormErrorMessage>{tokenError?.message}</FormErrorMessage>
             </>
           </FormControl> 
       
@@ -542,52 +550,36 @@ return (
        colorScheme='teal'
         variant='outline'
         onClick={()=> {              
-       return(
-         <>
-        <AppAlertDialog
-         isLoading={isLoading}
-         handleSubmit={() =>{ onConnect()
-         setIsLoading(false)}}
-         header="Connect Metamask"
-         body="Press Connect To Retry to Connect To Your Metamask Again"
-         disclosure={localDisclosure}
-         /// An Onclose Event or function 
-         customOnClose={() => {
-           localDisclosure.onClose()
-           setIsLoading(false)
-           
-         }}
-      
-       />
-       
-       </>
-       ) 
+          onGetLPVs
      
      }
    }
 >         
-Connect Metamask
+Get All Token LP
 </Button>
 </Stack>   
-
 <Stack direction='row' spacing={4}>
+       
+       <Button
+       isLoading
+       loadingText={isLoading? 'Reconnecting Metamask' : 'Connected'}  
+       colorScheme='teal'
+        variant='outline'
+        onClick={()=> {              
+      
+          onGetLPerToken
+     }
+   }
+>         
+Get All Dated Token LP
+</Button>
+</Stack> 
 
-  <Button
-    isLoading
-    loadingText='Setting Up Metamask'
-    colorScheme='teal'
-    variant='outline'
-    onSubmit={CreateMultisigAlert}
-  >
-    Submit
-    
-  </Button>
 
-</Stack>
   </chakra.form>
   </form>
 )
 
-};
+}
 
-export default CSVImportAndExport
+export default ExtractCSVAndPV

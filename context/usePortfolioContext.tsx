@@ -19,7 +19,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
       
     }
       
-    type TokenTypeOptions = Record<string, string>
+    export type TokenTypeOptions = Record<string, string>
 
      export interface GroupedRows  {
         count: number 
@@ -97,12 +97,12 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
           const newtime = getMaxtimestampPerToken(tokenchoice);
        
          const alltokensoftype =  getAllTokenOfParticularType(tokenchoice);
-         alltokensoftype.filter(({ timestamp }) => timestamp === newtime)
-        
+         alltokensoftype.find(({ timestamp }) => timestamp === newtime)[0]
+            return alltokensoftype[0];
          }
    
          
-         const getLatestTokenOfAllThreeTypes = (tokenchoice: string) => {
+         const getLatestTokenOfAllThreeTypes = () => {
           const BTCLatestToken = getLatestTokenOfType('BTC');
           const ETHLatestToken = getLatestTokenOfType('ETH');
           const XRPLatestToken = getLatestTokenOfType('XRP');
@@ -215,7 +215,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
        return  datedbalancedamount ;
       }
     
-      const getDatedPortFolioValueOfAllThreeTypes = (date: DateType, token: string) => 
+      const getDatedPortFolioValueOfAllThreeTypes = (date: DateType) => 
       { 
         const BTCDatedPV = getDatedPortFolioValueOfTokenType(date,'BTC');
         const ETHDatedPV = getDatedPortFolioValueOfTokenType(date,'ETH');
@@ -224,11 +224,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
      return  {BTCDatedPV, ETHDatedPV, XRPDatedPV} ;
     }
   
-      
-
-
-      return {mapKeygetter,
-     getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
+  return {mapKeygetter, getMaxtimestampToken,  getMaxtimestampPerToken,  selectTokenType,
   getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
   getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfSpecifiedToken,
   getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
