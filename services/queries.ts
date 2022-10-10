@@ -58,4 +58,23 @@ export default {
     )
     return result.data
   },
+
+  getCSVMultiPrice: (token: string ,secondtoken:string) => async () => {
+
+    const result = await axios.get<SwapTransactionType>(
+      `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${token},${secondtoken}&tsyms=BTC,USD,EUR&api_key=${String(process.env.CRYPTOCOMPARE)}`
+      
+    )
+    return result.data
+  },
+  
+  getCSVPrice: (token: string) => async () => {
+
+    const result = await axios.get<SwapTransactionType>(
+      `https://min-api.cryptocompare.com/data/price?fsym=${token}&tsyms=BTC,USD,EUR&api_key=${String(process.env.CRYPTOCOMPARE)}`
+      
+      
+    )
+    return result.data
+  },
 }

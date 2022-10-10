@@ -69,7 +69,7 @@ const TransactionsCard = ({ addressTo, addressFrom, timestamp, message, keyword,
 };
 const Transaction = () => {
 
-    const { transactions, currentAccount } = useTransactionContext();
+    const { transactions, currentAccount } = useTransferContext();
 
 
     return (

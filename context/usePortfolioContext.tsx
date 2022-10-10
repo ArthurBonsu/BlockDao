@@ -92,7 +92,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
         .filter(({ token }) => token === tokentype[chosentokentype])
          return tokensofXType; 
          }
-
+             // get All with token 
          const getLatestTokenOfType = (tokenchoice: string) => {
           const newtime = getMaxtimestampPerToken(tokenchoice);
        
@@ -101,7 +101,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
             return alltokensoftype[0];
          }
    
-         
+                   
          const getLatestTokenOfAllThreeTypes = () => {
           const BTCLatestToken = getLatestTokenOfType('BTC');
           const ETHLatestToken = getLatestTokenOfType('ETH');
@@ -109,7 +109,14 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
           
            return {BTCLatestToken, ETHLatestToken, XRPLatestToken } 
          }
-        
+         const getPortFolioValueOfTokenofAllThreeTypes = () => 
+         {
+           const BTCPVOfParticularToken = getPortFolioValueOfSpecifiedToken('BTC');
+                   const ETHVOfParticularToken = getPortFolioValueOfSpecifiedToken('ETH');
+                   const XRPVOfParticularToken = getPortFolioValueOfSpecifiedToken('XRP');
+           
+         return  {BTCPVOfParticularToken, ETHVOfParticularToken, XRPVOfParticularToken}  ;
+         }
          const getWithdrawnAmountOfTokenType  = (token: string ) => 
          {
           let withdrawnvalue = 0;  
@@ -141,15 +148,17 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
 
        return depositvalue; 
    }
-
+    //specified token LP
    const getPortFolioValueOfSpecifiedToken = (token: string) => 
    {
      const withdrawalamount = getWithdrawnAmountOfTokenType( token);
      const depositedamount   = getDepositedAmountOfTokenType(token); 
       const balancedamount = withdrawalamount > depositedamount? withdrawalamount - depositedamount : depositedamount -withdrawalamount ;
      
-  return  balancedamount ;
+  return  {balancedamount, withdrawalamount, depositedamount}  ;
 }
+
+
         //getLatestTokenOfAllThreeTypes
         //getPortfolioPerToken     
 
@@ -205,16 +214,16 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
       
             return depositvalue; 
         }
-      
+               //dated portfolio with token
         const getDatedPortFolioValueOfTokenType = (date: DateType, token: string) => 
         {
           const datedwithdrawalamount = getDatedWithdrawnAmountOfTokenType( date,token);
           const dateddepositedamount   = getDatedDepositedAmountOfTokenType(date, token); 
            const datedbalancedamount = datedwithdrawalamount > dateddepositedamount? datedwithdrawalamount - dateddepositedamount : dateddepositedamount -datedwithdrawalamount ;
           
-       return  datedbalancedamount ;
+       return  {datedbalancedamount, datedwithdrawalamount, dateddepositedamount} ;
       }
-    
+        // All three types
       const getDatedPortFolioValueOfAllThreeTypes = (date: DateType) => 
       { 
         const BTCDatedPV = getDatedPortFolioValueOfTokenType(date,'BTC');
@@ -228,7 +237,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
   getAllTokenOfParticularType,  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
   getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfSpecifiedToken,
   getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
-  getDatedPortFolioValueOfTokenType,getDatedPortFolioValueOfAllThreeTypes
+  getDatedPortFolioValueOfTokenType,getDatedPortFolioValueOfAllThreeTypes, getPortFolioValueOfTokenofAllThreeTypes
   } 
  }
   

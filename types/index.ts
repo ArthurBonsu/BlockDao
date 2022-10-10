@@ -230,3 +230,29 @@ export type CSVPropsType=  {
   token: string,
   amount: string
 }
+
+
+export type CoinlistReturns=  {
+  BaseImageUrl:string,
+  BaseLinkUrl : string, 
+  CoinData: string,
+  
+}
+export type CoinlistData=  {
+  Id? :string,
+  Url?  : string, 
+  ImageUrl? : string,
+  Name? : string,  
+  Symbol?: string,  
+  CoinName? : string,  
+  FullName? : string,
+  Algorithm? : string,
+  ProofType?: string,
+  FullyPremined? : string,
+  TotalCoinSupply? : string,
+  PreMinedValue? : string,
+  TotalCoinsFreeFloat? : string,
+  SortOrder?: string,
+  Sponsored?: string, 
+  
+}

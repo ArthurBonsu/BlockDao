@@ -53,6 +53,7 @@ import { useQuery } from 'react-query'
 import queries from "@services/queries";
 import { RowType,TokensSelected, CSVProps, CSVPropsType } from "types/index";
 import {  createCSCFormSchema, TcreateCSCFormSchemaValues  } from '../../validation'
+import cryptocompare from 'cryptocompare'
 
 
  const SelectedTokenList : TokensSelected[] = [
@@ -75,187 +76,132 @@ let timestampstore: Array<String> ; let transaction_typestore: Array<string>; le
 let amountstore:Array<string> ;  let timestampgiven, _thetransactiontype, tokengained,amountpushed ;
 let rows: Array<RowType>;
 let onTokenSelected, onDatePicked; 
+let datedbalancedamount,datedwithdrawalamount,dateddepositedamount;
+let BTCPVOfParticularToken, ETHVOfParticularToken, XRPVOfParticularToken;
+let balancedamount,withdrawalamount,depositedamount;
 
-      const ExtractCSVAndPV = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+
+      const AllPVs = ({ _BTCPVOfParticularToken, _ETHVOfParticularToken, _XRPVOfParticularToken  }) => {
                    
         return (
       <Stack spacing={6}>
           <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+          <Heading as='h1' size='4xl' noOfLines={1}>    </Heading>
          <br>
-        <Text as='b'> Username</Text>
-        <Text as='b'>{username}</Text>
+        <Text as='b'> Bitcoin PV Value</Text>
+        <Text as='b'>{_BTCPVOfParticularToken}</Text>
         </br>
       
         <br>
-        <Text as='b'> Payment Hash</Text>
-        <Text as='b'>{paymenthash}</Text>
+        <Text as='b'> Ethereum PV Value</Text>
+        <Text as='b'>{_ETHVOfParticularToken}</Text>
         </br>
       
-      
-        {receipients.map((item ,index) =>{
-          <>
-          <Text as='b'> Receipient:  {index} </Text>
-         <Text as='b'>First Token </Text>
-       </>
-        } )
-      }
-         <br>
-        <Text as='b'> Owner Address  </Text>
-        <Text as='b'>{contractowneraddress} </Text>
+        <br>
+        <Text as='b'> XRP PV Value</Text>
+        <Text as='b'>{_XRPVOfParticularToken}</Text>
         </br>
-       
-        <>
-        <Text as='b'>Amount of Tokens </Text>
-        <Text as='b'>{amount} </Text>
-        </>
+      
         
-        <>
-        <Text as='b'>Price </Text>
-        <Text as='b'>{usdPrice} </Text>
-        </>
       </Box>
           </Stack>
         )
       }
       
 
-      const PVForToken = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+      const PVForToken = ({ token, balancedamount, withdrawalamount, depositedamount  }) => {
        
        
        
         return (
       <Stack spacing={6}>
           <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+          <Heading as='h1' size='4xl' noOfLines={1}> PV For Token Selected {token}      </Heading>
          <br>
-        <Text as='b'> Username</Text>
-        <Text as='b'>{username}</Text>
+        <Text as='b'> Balanced Amount</Text>
+        <Text as='b'>{balancedamount}</Text>
         </br>
       
         <br>
-        <Text as='b'> Payment Hash</Text>
-        <Text as='b'>{paymenthash}</Text>
+        <Text as='b'> Withdrawal Amount</Text>
+        <Text as='b'>{withdrawalamount}</Text>
+        </br>
+        <br>
+        <Text as='b'> Deposit Amount</Text>
+        <Text as='b'>{depositedamount}</Text>
         </br>
       
-      
-        {receipients.map((item ,index) =>{
-          <>
-          <Text as='b'> Receipient:  {index} </Text>
-         <Text as='b'>First Token </Text>
-       </>
-        } )
-      }
-         <br>
-        <Text as='b'> Owner Address  </Text>
-        <Text as='b'>{contractowneraddress} </Text>
-        </br>
-       
-        <>
-        <Text as='b'>Amount of Tokens </Text>
-        <Text as='b'>{amount} </Text>
-        </>
         
-        <>
-        <Text as='b'>Price </Text>
-        <Text as='b'>{usdPrice} </Text>
-        </>
+      
       </Box>
           </Stack>
         )
       }
       
-      const DatePerTokens = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+    
+      
+      const DateForMultiToken = ({ date, BTCDatedPV, ETHDatedPV, XRPDatedPV  }) => {
        
        
        
         return (
       <Stack spacing={6}>
           <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+          <Heading as='h1' size='4xl' noOfLines={1}> View PV Value From Date {date} Given     </Heading>
          <br>
-        <Text as='b'> Username</Text>
-        <Text as='b'>{username}</Text>
+        <Text as='b'> BTC PV</Text>
+        <Text as='b'>{BTCDatedPV}</Text>
         </br>
       
         <br>
-        <Text as='b'> Payment Hash</Text>
-        <Text as='b'>{paymenthash}</Text>
+        <Text as='b'> ETC PV</Text>
+        <Text as='b'>{ETHDatedPV}</Text>
         </br>
       
       
-        {receipients.map((item ,index) =>{
-          <>
-          <Text as='b'> Receipient:  {index} </Text>
-         <Text as='b'>First Token </Text>
-       </>
-        } )
-      }
+    
          <br>
-        <Text as='b'> Owner Address  </Text>
-        <Text as='b'>{contractowneraddress} </Text>
+        <Text as='b'> XRP PV  </Text>
+        <Text as='b'>{XRPDatedPV} </Text>
         </br>
        
-        <>
-        <Text as='b'>Amount of Tokens </Text>
-        <Text as='b'>{amount} </Text>
-        </>
-        
-        <>
-        <Text as='b'>Price </Text>
-        <Text as='b'>{usdPrice} </Text>
-        </>
+    
       </Box>
           </Stack>
         )
       }
       
-      const DatePerToken = ({ account, username, paymenthash, receipients , contractowneraddress,  amount, usdPrice  }) => {
+      const DateWithToken = ({ date,token , datedbalancedamount, datedwithdrawalamount, dateddepositedamount  }) => {
        
        
        
         return (
       <Stack spacing={6}>
           <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden'>
-          <Heading as='h1' size='4xl' noOfLines={1}> View Payment Transaction of User : {account} From Here     </Heading>
+          <Heading as='h1' size='4xl' noOfLines={1}> View PV Value From Date {date} and Token {token} With Token Here  </Heading>
          <br>
-        <Text as='b'> Username</Text>
-        <Text as='b'>{username}</Text>
+        <Text as='b'> Balanced PV</Text>
+        <Text as='b'>{datedbalancedamount}</Text>
         </br>
       
         <br>
-        <Text as='b'> Payment Hash</Text>
-        <Text as='b'>{paymenthash}</Text>
+        <Text as='b'> Dated Withdrawal Amount</Text>
+        <Text as='b'>{datedwithdrawalamount}</Text>
         </br>
       
       
-        {receipients.map((item ,index) =>{
-          <>
-          <Text as='b'> Receipient:  {index} </Text>
-         <Text as='b'>First Token </Text>
-       </>
-        } )
-      }
+    
          <br>
-        <Text as='b'> Owner Address  </Text>
-        <Text as='b'>{contractowneraddress} </Text>
+        <Text as='b'> Dated Deposit Amount   </Text>
+        <Text as='b'>{dateddepositedamount} </Text>
         </br>
        
-        <>
-        <Text as='b'>Amount of Tokens </Text>
-        <Text as='b'>{amount} </Text>
-        </>
-        
-        <>
-        <Text as='b'>Price </Text>
-        <Text as='b'>{usdPrice} </Text>
-        </>
+    
       </Box>
           </Stack>
         )
       }
       
-
 const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}: CSVProps )=> {
 
 
@@ -264,6 +210,9 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
     const [isLoading, setIsLoading] = useState(false);
     const [_tokenselect, setTokenSelected] = useState(false); 
     const [dateselect, setDatePicker] = useState(false); 
+    const [tokenexecute,setTokenExecute ] = useState(false)
+    const [executetokendate,setTokenDateExectuted ] = useState(false)
+    const [tokenwithdateexecute, setTokenWithDateExecute] = useState(false)
 
     const schema = yup.object().shape({
 
@@ -335,44 +284,68 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
  const {  getLatestTokenOfType,  getLatestTokenOfAllThreeTypes,
   getWithdrawnAmountOfTokenType,  getDepositedAmountOfTokenType,  getPortFolioValueOfSpecifiedToken,
   getPortFolioWithDate,  getDatedWithdrawnAmountOfTokenType,  getDatedDepositedAmountOfTokenType,
-  getDatedPortFolioValueOfTokenType,getDatedPortFolioValueOfAllThreeTypes}   = usePortFolioContext();
+  getDatedPortFolioValueOfTokenType,getDatedPortFolioValueOfAllThreeTypes, getPortFolioValueOfTokenofAllThreeTypes }   = usePortFolioContext();
 
+  const cryptoCompareKey = cryptocompare.setApiKey(process.env.CRYPTOCOMPARE);
   
   
-    
 
   
   const  onGetLPVs = async() => {
-    const allLPV = getLatestTokenOfAllThreeTypes(); 
-    return allLPV;
+    const {BTCPVOfParticularToken, ETHVOfParticularToken, XRPVOfParticularToken} = getPortFolioValueOfTokenofAllThreeTypes(); 
+    
+     const pricetx = await cryptocompare.priceMulti('BTC', 'USD');
+     const pricePerToken = pricetx.wait()
+    
+      // Returning For Each Token
+ const {  balancedamount, withdrawalamount,depositedamount} = BTCPVOfParticularToken
+
+
+    return {BTCPVOfParticularToken,ETHVOfParticularToken,XRPVOfParticularToken };
     // LPVToBeBuiltHere
 
  }
 
    
     const onGetLPerToken = async(token) => {
-      
+    
+      const pricetx = await cryptocompare.priceMulti(token, 'USD');
+      const pricePerToken = pricetx.wait()
+  
+
       if(!_tokenselect){
-     const  LPVOfToken =  getLatestTokenOfType(token);
+     const  {balancedamount, withdrawalamount, depositedamount}=  getPortFolioValueOfSpecifiedToken(token);
          setTokenSelected(false); 
-        return LPVOfToken;
+         const balancedamountInUSD  =balancedamount * pricePerToken;
+         const withdrawalamountInUSD =withdrawalamount * pricePerToken
+         const depositedamountInUSD =depositedamount * pricePerToken
+        return {balancedamountInUSD, withdrawalamountInUSD, depositedamountInUSD};
       } }
-   
+     
+      const onGetDateOfAllTokens = async(date) => {
+        if(!dateselect){
+        const {BTCDatedPV, ETHDatedPV, XRPDatedPV} =  getDatedPortFolioValueOfAllThreeTypes(date);
+        setDatePicker(false);
+          return {BTCDatedPV, ETHDatedPV, XRPDatedPV};
+        }}
      
      const onGetTokenWithDate = async(date, token) => {
-      const tokenWithDate =  getDatedPortFolioValueOfTokenType(date, token);
-        return  tokenWithDate;
+      const {datedbalancedamount, datedwithdrawalamount, dateddepositedamount} =  getDatedPortFolioValueOfTokenType(date, token);
+
+      const pricetx = await cryptocompare.priceMulti(token, 'USD');
+      const pricePerToken = pricetx.wait()
+
+      const datedbalancedamountInUSD  =datedbalancedamount * pricePerToken;
+      const datedwithdrawalamountInUSD =datedwithdrawalamount * pricePerToken;
+      const dateddepositedamountInUSD =dateddepositedamount * pricePerToken;
+
+        return  {datedbalancedamountInUSD, datedwithdrawalamountInUSD, dateddepositedamountInUSD};
      }
 
 
-     const onGetDateOfAllTokens = async(date) => {
-      if(!dateselect){
-      const datedAllTokens =  getDatedPortFolioValueOfAllThreeTypes(date);
-      setDatePicker(false);
-        return onGetTokenWithDate;
-      }}
+     
      useEffect(() => {
-     onGetLPVs()
+  
     
 
     }, [rows, date,pvvalue,timestamp,transaction_type,token,amount])
@@ -405,6 +378,7 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
                         transaction_typestore.push(_thetransactiontype);
                         tokenstore.push(tokengained);   
                         amountstore.push(amountpushed);           
+                   return item;
                     })
                     }
           
@@ -424,7 +398,7 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
         utils.sheet_add_aoa(ws, headings);
         utils.sheet_add_json(ws, porfoliodetails, { origin: 'A2', skipHeader: true });
         utils.book_append_sheet(wb, ws, 'Transaction CSV');
-        writeFile(wb, 'Transaction CSV.xlsx');
+        writeFile(wb, 'transactioncsv.xlsx');
     
       }
   
@@ -451,7 +425,8 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
        
       <Button onClick={() => {
         
-        onGetTokenWithDate} 
+        onGetTokenWithDate
+         setTokenDateExectuted(true) } 
         
         }    >Get Dated LP </Button>
       
@@ -476,7 +451,7 @@ const CSVSubmit =( {rows, date,pvvalue,timestamp,transaction_type,token,amount}:
  
 <Button onClick={() => {
   onGetLPerToken
-  
+  setTokenExecute(true); 
   } }    >Get Token LP </Button>
 
 </div>                            
@@ -509,7 +484,7 @@ return (
         <Flex flexDirection="row" py={4} key={item.id}>
          
            <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokenError?.message} mx={2}>
-            <FormLabel> TokenLists</FormLabel>
+            <FormLabel> Token Selected</FormLabel>
             <>     
             <Select {...register("token")} placeholder="Select option" isReadOnly={isLoading} onSelect={()=> { onTokenSelected()}} 
              >
@@ -531,7 +506,7 @@ return (
           </FormControl> 
       
           <FormControl w="150px" id={`SelectedTokenList.${index}.symbol`} isInvalid={!!tokenError?.message} mx={2}>
-            <FormLabel> TokenLists</FormLabel>
+            <FormLabel> Date Pick</FormLabel>
             <>     
             <Input  placeholder="Select Date and Time"  size="md"  type="datetime-local" onSelect={()=> {onDatePicked()}} {...register("date")}/>
                        
@@ -542,22 +517,42 @@ return (
         </Flex>
       )
     })}
-      <Stack direction='row' spacing={4}>
-       
-       <Button
-       isLoading
-       loadingText={isLoading? 'Reconnecting Metamask' : 'Connected'}  
-       colorScheme='teal'
-        variant='outline'
-        onClick={()=> {              
-          onGetLPVs
+
+    {tokenexecute }? (
+
+     <Text>  PV Details For {token} selected </Text>
+     <PVForToken
      
-     }
-   }
->         
-Get All Token LP
-</Button>
-</Stack>   
+      token ={token}
+      balancedamount ={balancedamount}
+       withdrawalamount ={withdrawalamount}
+       depositedamount ={depositedamount} 
+     
+     />
+
+  
+    
+    ): ()
+    
+    {executetokendate }? (
+
+<Text>  PV Details For {token} and {date} selected </Text>
+<PVForToken
+     
+     token ={token}
+     balancedamount ={balancedamount}
+      withdrawalamount ={withdrawalamount}
+      depositedamount ={depositedamount} 
+    
+    />
+): (<Text>PV Details For token {token} and date {date} unselected  </Text>  )
+
+  
+
+{tokenexecute && executetokendate }? (
+
+<Text>  PV Details For {token} and {date} selected </Text>
+
 <Stack direction='row' spacing={4}>
        
        <Button
@@ -566,14 +561,65 @@ Get All Token LP
        colorScheme='teal'
         variant='outline'
         onClick={()=> {              
-      
-          onGetLPerToken
-     }
+            setIsLoading(true)
+      onGetTokenWithDate(date, token)
+           setIsLoading(false);
+           // settoken 
+           // settoken
+           <DateWithToken
+           date = {date}
+           token = {token}
+           datedbalancedamount = {datedbalancedamount}
+           datedwithdrawalamount = {datedwithdrawalamount}
+           dateddepositedamount = {dateddepositedamount}
+           
+           />
+          
+           }
    }
 >         
-Get All Dated Token LP
+Get All Token LP
 </Button>
 </Stack> 
+
+<PVForToken
+     
+     token ={token}
+     balancedamount ={balancedamount}
+      withdrawalamount ={withdrawalamount}
+      depositedamount ={depositedamount} 
+    
+    />
+): ()
+
+
+
+      <Stack direction='row' spacing={4}>
+       
+       <Button
+       isLoading
+       loadingText={isLoading? 'Reconnecting Metamask' : 'Connected'}  
+       colorScheme='teal'
+        variant='outline'
+        onClick={()=> {              
+            setIsLoading(true)
+           onGetLPVs()
+           setIsLoading(false);
+           <AllPVs
+           _BTCPVOfParticularToken = {BTCPVOfParticularToken}
+           _ETHVOfParticularToken = {ETHVOfParticularToken}
+           _XRPVOfParticularToken = {XRPVOfParticularToken}
+           
+           />
+          
+           }
+   }
+>         
+Get All Token LP
+</Button>
+</Stack> 
+
+
 
 
   </chakra.form>
@@ -582,4 +628,5 @@ Get All Dated Token LP
 
 }
 
-export default ExtractCSVAndPV
+
+export default CSVSubmit

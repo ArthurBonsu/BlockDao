@@ -92,11 +92,13 @@ const TransactionDisplay = ({ account, username, paymenthash, receipients , cont
 
 
   {receipients.map((item ,index) =>{
-    <>
+
+<>
     <Text as='b'> Receipient:  {index} </Text>
    <Text as='b'>First Token </Text>
  </>
-  } )
+   return item; } )
+
 }
    <br>
   <Text as='b'> Owner Address  </Text>
@@ -115,6 +117,7 @@ const TransactionDisplay = ({ account, username, paymenthash, receipients , cont
 </Box>
     </Stack>
   )
+ 
 }
 
 
@@ -149,7 +152,7 @@ const PaymentTransfer = ({
      ourUSDPrice,
     accountsprovided} = useTransactionContext();
 
-    
+    const router = useRouter();
     const localDisclosure = useDisclosure()
     const [paymentapproved, setPaymentApproved] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -216,9 +219,9 @@ const PaymentTransfer = ({
     setPaymentcompleted(true);
       setIsLoading(false);
       
-    
+    return item;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username,address, amount,comment,receipients])
+  }, [username,address, amount])
 })
   
   const onMultiReceipientOpen= () => {
@@ -231,7 +234,7 @@ const PaymentTransfer = ({
     }
 
     const onMoveToTransfer =  () =>{
-      const router = useRouter();
+     
       router.push(pathname);
 
     }

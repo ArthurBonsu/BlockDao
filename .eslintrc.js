@@ -34,8 +34,8 @@ module.exports = {
     "no-const-assign": "off",
     "no-cond-assign":"off",
     "no-constant-condition":"off",
-
-
+    "react-hooks/exhaustive-deps":"off",
+     "camelcase": "off",
 
    // "@typescript-eslint/no-duplicate-imports": ["error"],
     "prettier/prettier": "off",
