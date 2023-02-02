@@ -32,12 +32,13 @@ export const Auth: FC = () => {
   const { push } = useRouter()
   const address = useEthersStore((state) => state.address)
 
-  useEffect(() => {
+ 
+ useEffect(() => {
     if (address) {
       push('/safe')
     }
   }, [address, push])
-
+  
   return (
     <Grid placeItems="center" h="100vh">
       <Button onClick={onConnect}>Connect</Button>

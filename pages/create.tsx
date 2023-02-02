@@ -20,7 +20,7 @@ import createSafe from '@utils/createSafe'
 import { getLayout, WithPageLayout } from '@components/Layout'
 
 
-require ("../hardhat.config")
+//require ("../hardhat.config")
 
 type address = {
   value: string

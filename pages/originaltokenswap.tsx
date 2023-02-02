@@ -191,12 +191,7 @@ export default useSafe
   ]
 
 
- 
-
-   
-  
-   
-      export const TokenSwapOriginal:  React.FC<SwapTransactionType> = ( {tokentxhash, nonce,amount,tokenname, symbol, logoUri}) => {
+       export const TokenSwapOriginal:  React.FC<SwapTransactionType> = ( {tokentxhash, nonce,amount,tokenname, symbol, logoUri}) => {
 
     // getting address and state of address
     const address = useEthersStore((state) => state.address)

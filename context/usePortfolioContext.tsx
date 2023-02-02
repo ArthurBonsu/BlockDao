@@ -82,7 +82,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
         const selectTokenType =(tokenexpected:string) => {
           const tokenoptions: TokenSet = { ETH:"ETH", BTC: "BTC", XRP: "XRP" }
           const tokentypeselected = Object.keys(tokenoptions).filter((tokenexpected) => tokenoptions[tokenexpected])[0]
-        return   tokentypeselected
+          return   tokentypeselected
       }
                 
         const getAllTokenOfParticularType = (tokenchoice: string ) => {
@@ -117,6 +117,7 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
            
          return  {BTCPVOfParticularToken, ETHVOfParticularToken, XRPVOfParticularToken}  ;
          }
+     
          const getWithdrawnAmountOfTokenType  = (token: string ) => 
          {
           let withdrawnvalue = 0;  
@@ -139,8 +140,8 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
        
         const alltokens = groupSheet[key];
         const selectedTokens =   alltokens.filter(({ token }) => token === token)
-      const transactiontypeset =      selectedTokens.filter(({ transaction_type}) => transaction_type === 'DEPOSIT')
-      const sum = selectedTokens.reduce((summation , currentamount) => {
+        const transactiontypeset = selectedTokens.filter(({ transaction_type}) => transaction_type === 'DEPOSIT')
+        const sum = selectedTokens.reduce((summation , currentamount) => {
         depositvalue =   depositvalue + Number(currentamount.amount);
     
             return  summation;
@@ -149,7 +150,8 @@ import { RiEmotionNormalLine } from 'react-icons/ri'
        return depositvalue; 
    }
     //specified token LP
-   const getPortFolioValueOfSpecifiedToken = (token: string) => 
+   
+    const getPortFolioValueOfSpecifiedToken = (token: string) => 
    {
      const withdrawalamount = getWithdrawnAmountOfTokenType( token);
      const depositedamount   = getDepositedAmountOfTokenType(token); 

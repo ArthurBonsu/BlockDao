@@ -7,13 +7,14 @@ module.exports = {
         
         roots: [__dirname, fixtures],
         importsFields: ['browser', 'module', 'main'],
+        
       fallback: {
         assert: require.resolve('assert'),
         buffer: require.resolve('buffer'),
         console: require.resolve('console-browserify'),
         constants: require.resolve('constants-browserify'),
         crypto: require.resolve('crypto-browserify'),
-        domain: require.resolve('domain-browser'),
+      
         events: require.resolve('events'),
         http: require.resolve('stream-http'),
         https: require.resolve('https-browserify'),
@@ -24,16 +25,34 @@ module.exports = {
         querystring: require.resolve('querystring-es3'),
         stream: require.resolve('stream-browserify'),
         string_decoder: require.resolve('string_decoder'),
-        sys: require.resolve('util'),
+        util: require.resolve('util'),
         timers: require.resolve('timers-browserify'),
         tty: require.resolve('tty-browserify'),
         url: require.resolve('url'),
         util: require.resolve('util'),
         vm: require.resolve('vm-browserify'),
         zlib: require.resolve('browserify-zlib'),
-        streamweb: require.resolve('stream/web')
+        fs : require.resolve('fs'),
+        fs: require.resolve('fs/promises'),
+        require :resolve('fs/promises'),
+        webstream : require('web-streams-polyfill/ponyfill'),
+        stream: require.resolve('stream'),
+        util: require.resolve('util'),
+     
+       perf_hooks: require.resolve('perf_hooks'),
+        
+       querystring: require.resolve('querystring'),
+       querystring: require.resolve('querystring-es3'),
+       domain: require.resolve('domain'),
+       domain: require.resolve('domain-browser'),
+       worker_threads: require.resolve('worker_threads'),
+       util_types: require.resolve('util/types'),
+       
       },
+
+
     },
+   
 
 //...
 resolveLoader: {
@@ -41,5 +60,5 @@ resolveLoader: {
     extensions: ['.js', '.json'],
     mainFields: ['loader', 'main'],
   },
-
+ 
   };
