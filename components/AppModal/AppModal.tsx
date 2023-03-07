@@ -14,16 +14,17 @@ interface AppModalProps {
   title?: string
   closeOnOverlayClick?: boolean
   modalSize?: ModalProps['size']
+  bodymessage? : string 
 }
 
 /// THE APP MODAL
-const AppModal: React.FC<AppModalProps> = ({ disclosure, title, modalSize = '4xl', children, ...rest }) => (
+const AppModal: React.FC<AppModalProps> = ({ disclosure, title, modalSize = '4xl',bodymessage,  ...rest }) => (
   <Modal onClose={disclosure.onClose} isOpen={disclosure.isOpen} size={modalSize} closeOnOverlayClick={true} {...rest}>
     <ModalOverlay />
     <ModalContent>
       {title && <ModalHeader>{title}</ModalHeader>}
       <ModalCloseButton />
-      <ModalBody>{children}</ModalBody>
+      <ModalBody>{bodymessage}</ModalBody>
     </ModalContent>
   </Modal>
 )
