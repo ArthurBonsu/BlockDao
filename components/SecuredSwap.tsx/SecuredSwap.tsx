@@ -3,7 +3,7 @@ import AppAlertDialog from '@components/AppAlertDialog'
 import useSafeSdk from 'hooks/useSafeSdk'
 import { FC, useCallback, useState } from 'react'
 
-interface RejectTransferProps extends ButtonProps {
+interface RejectTransferProps  {
   safeTxHash: string | null
   threshold: number
   execTxn: Boolean

@@ -18,7 +18,7 @@ import { useCallback, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { CreateTransferInput } from 'types'
 import CreateTransferForm from './CreateTransferForm'
-import { TCreateTransferFormSchemaValues,   TCreateSwapTransferInput,createTransferFormSchema,    TcreateSwapTransferFormSchema} from '../../validation'
+import { TCreateTransferFormSchemaValues,   TCreateSwapTransferInput,createTransferFormSchema,    TcreateSwapTransferFormSchema} from '../../validation';
 import { useSafeStore, Safe } from 'stores/safeStore'
 import { MySafeTransactionData } from 'types'
 import hre, { ethers } from 'hardhat';
@@ -252,7 +252,7 @@ const createSwapTransaction  =useCallback(
 
 return (
     <Box w="full">
-      <AppModal disclosure={modalDisclosure} closeOnOverlayClick={false}>
+      <AppModal    disclosure={modalDisclosure} closeOnOverlayClick={false}  >
        
         <FormProvider {...formMethods}>
 

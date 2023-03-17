@@ -5,7 +5,7 @@ import { useSafeSdk } from 'hooks'
 import { useEffect, useState } from 'react'
 
 // Load transfer for safe transactions here 
-interface ExecuteTransferProps extends ButtonProps {
+interface ExecuteTransferProps {
   safeTxHash: string
   safeRejectTxHash: string | null
   threshold: string | number | undefined

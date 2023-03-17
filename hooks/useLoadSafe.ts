@@ -35,7 +35,7 @@ let  { TransactionRequest,TransactionResponse,TransactionReceipt } = require("@e
   
      ethAdapter = new EthersAdapter({
     ethers,
-    signer: owner
+    signerOrProvider: owner
   })
   const safeService = new SafeServiceClient({
     txServiceUrl: 'https://safe-transaction.gnosis.io/ropsten',

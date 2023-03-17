@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect } from 'react'
+import { FC, PropsWithChildren, ReactNode, useEffect } from 'react'
 import {
   Box,
   ButtonGroup,
@@ -20,7 +20,7 @@ import getHiddenVersion from '@utils/getHiddenName'
 import { useEthersStore } from '@stores/ethersStore'
 import { BasicAuth } from './BasicAuth'
 
-interface LayoutProps {
+interface LayoutProps extends PropsWithChildren {
   title: string
 }
 

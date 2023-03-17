@@ -20,7 +20,7 @@ const owner = provider.getSigner(0)
  let  signer = new Wallet(String(process.env.RINKEBY_MNEUMONIC), provider)
  ethAdapter = new EthersAdapter({
   ethers,
-  signer: owner
+  signerOrProvider: owner
 })
 const safeService = new SafeServiceClient({
   txServiceUrl: 'https://safe-transaction.rinkeby.gnosis.io',

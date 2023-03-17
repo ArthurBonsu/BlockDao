@@ -10,7 +10,7 @@ import { loadComponents } from 'next/dist/server/load-components'
 
 
 
-export interface CrowdsourceTransferProps extends ButtonProps {
+export interface CrowdsourceTransferProps  {
   safeTxHash: string
   safeRejectTxHash: string | null
   threshold: string | number | undefined

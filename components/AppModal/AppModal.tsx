@@ -8,8 +8,9 @@ import {
   ModalProps,
   UseDisclosureReturn,
 } from '@chakra-ui/react'
+import { PropsWithChildren } from 'react'
 
-interface AppModalProps {
+interface AppModalProps extends PropsWithChildren {
   disclosure: UseDisclosureReturn
   title?: string
   closeOnOverlayClick?: boolean
@@ -18,13 +19,13 @@ interface AppModalProps {
 }
 
 /// THE APP MODAL
-const AppModal: React.FC<AppModalProps> = ({ disclosure, title, modalSize = '4xl',bodymessage,  ...rest }) => (
+const AppModal: React.FC<PropsWithChildren<AppModalProps>> = ({ disclosure, title, modalSize = '4xl',  bodymessage, closeOnOverlayClick, children,   ...rest }) => (
   <Modal onClose={disclosure.onClose} isOpen={disclosure.isOpen} size={modalSize} closeOnOverlayClick={true} {...rest}>
     <ModalOverlay />
     <ModalContent>
       {title && <ModalHeader>{title}</ModalHeader>}
       <ModalCloseButton />
-      <ModalBody>{bodymessage}</ModalBody>
+      <ModalBody>{children}</ModalBody>
     </ModalContent>
   </Modal>
 )

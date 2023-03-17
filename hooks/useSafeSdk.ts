@@ -35,7 +35,7 @@ const  useSafeSdk = () => {
       const signerData = provider.getSigner(0)
        ethAdapter = new EthersAdapter({
         ethers,
-        signer: signerData,
+        signerOrProvider: signerData,
       })
 
   

@@ -3,7 +3,10 @@ import { useEffect, FC, ReactNode } from 'react'
 import { useEthersStore } from '@stores/ethersStore'
 
 // For authenticating address and setting the address
-export const BasicAuth: FC = ({ children }) => {
+
+ export interface IAuthRouteProps{
+  children?: ReactNode | undefined}
+export const BasicAuth: FC<IAuthRouteProps> = ({ children }) => {
   const { replace } = useRouter()
   const address = useEthersStore((state) => state.address)
 

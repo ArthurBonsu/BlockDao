@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 
 
 
-interface ExecuteTransferProps extends ButtonProps {
+interface ExecuteTransferProps  {
   safeTxHash: string
   safeRejectTxHash: string | null
   threshold: string | number | undefined
