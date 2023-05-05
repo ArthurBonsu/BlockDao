@@ -18,7 +18,7 @@ export const getSafesWithoutModule = async () => {
   const provider = new ethers.providers.Web3Provider(web3Provider)
   const owner = provider.getSigner(0)
   const [signer] = await hre.ethers.getSigners();
-const ethAdapter = new EthersAdapter({ ethers, signer });
+const ethAdapter = new EthersAdapter({ ethers, signerOrProvider: owner });
 const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter });
   const signedUser = await owner.getAddress()
   const { safes } = await safeService.getSafesByOwner(signedUser)

@@ -38,7 +38,8 @@ const nextConfig = {
     querystring_es3: false,
     domain: false,
     worker_threads: false,
-    vm:false
+    vm:false,
+    chakraui: false
       }
   }
  
@@ -57,7 +58,7 @@ const nextConfig = {
      config.resolve.fallback={vm:false};
      config.resolve.fallback={path:false};
      config.resolve.fallback={os:false};
-
+     config.resolve.fallback={chakraui:false};
      config.resolve.fallback = {
       url: require.resolve("url"),
       fs: require.resolve("graceful-fs"),

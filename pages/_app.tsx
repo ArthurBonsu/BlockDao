@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic'
 import queryClient from '@config/queryClient'
 import { WithPageLayout } from '@components/Layout'
 import theme from 'theme'
+import { useSession, signIn, signOut } from 'next-auth/react';
 import NextAuth from 'next-auth'
 
 type NextPageWithLayout = NextPage & WithPageLayout
@@ -18,8 +19,9 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-const App: FC<AppPropsWithLayout> = ({ Component, pageProps: {session,  ...pageProps} }) => {
+const App: FC<AppPropsWithLayout> = ({ Component, pageProps: { ...pageProps} }) => {
   const getLayout = Component.getLayout ?? ((page) => page)
+  const {data: session} = useSession()
   return (
     <SessionProvider session={session}>
     <ChakraProvider theme={theme}>

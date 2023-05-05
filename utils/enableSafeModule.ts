@@ -36,14 +36,16 @@ export const enableModule = async (safeAddress: string): Promise<ReturnType> => 
   const provider = new hre.ethers.providers.Web3Provider(web3Provider)
   const owner = provider.getSigner(0)
 
+
   const [signer] = await hre.ethers.getSigners();
-  const ethAdapter = new EthersAdapter({ ethers, signer });
+  const ethAdapter = new EthersAdapter({  ethers,
+    signerOrProvider: owner, });
   const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter });
 
   const safe = await Safe.create({
-    ethAdapter: new EthersAdapter({
-      ethers,
-      signer: owner,
+ethAdapter: new EthersAdapter({
+          ethers,
+          signerOrProvider: owner,
     }),
     safeAddress,
   })

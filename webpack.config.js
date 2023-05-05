@@ -74,7 +74,7 @@ module.exports = {
        util: require.resolve('util'),
        vm: require.resolve('vm-browserify'),
        zlib: require.resolve('browserify-zlib'),
-      
+        chakraui: require.resolve('chakra-ui/react')
       },
 
 

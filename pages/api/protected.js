@@ -1,8 +1,8 @@
 import Rect from 'react'
 import { getSession, useSession } from "next-auth/react"
-import {Heading} from 'chakra-ui/react'
-import { useRouter } from 'next/router'
 
+import { useRouter } from 'next/router'
+const  {Heading} =require ('@chakra-ui/react');
 const Protected  = ( ) => {
     const {push} = useRouter()
     const {data:session, status }  = useSession({

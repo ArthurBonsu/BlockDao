@@ -126,7 +126,7 @@ queries.getSafeTransfers(safeADdress), {
    // looping the values and using the details, 
    // passing the details of the queries into the various components for execution
   return !data || isLoading ? (
-    <Box minH="calc(100vh - 64px)" d="flex" alignItems="center" justifyContent="center">
+    <Box minH="calc(100vh - 64px)"  alignItems="center" justifyContent="center">
       <Spinner />
     </Box>
   ) : (

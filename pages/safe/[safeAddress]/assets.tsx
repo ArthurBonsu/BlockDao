@@ -24,7 +24,7 @@ const Assets: WithPageLayout = () => {
   }
 
   return isLoading ? (
-    <Box minH="calc(100vh - 64px)" d="flex" alignItems="center" justifyContent="center">
+    <Box minH="calc(100vh - 64px)" alignItems="center" justifyContent="center">
       <Spinner />
     </Box>
   ) : (

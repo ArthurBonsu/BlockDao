@@ -5,6 +5,7 @@ import { FC, useCallback, useState } from 'react'
 
 interface RejectTransferProps  {
   safeTxHash: string | null
+  isDisabled?:  boolean
   threshold: number
   execTxn: Boolean
   nonce: number

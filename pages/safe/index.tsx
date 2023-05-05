@@ -50,13 +50,13 @@ const Safe: WithPageLayout = () => {
             <Box>No safes found under your wallet</Box>
           )}
         </VStack>
-        <Button colorScheme="green" isFullWidth onClick={onLoadSafe} disabled={!selectedSafe}>
+        <Button colorScheme="green"  onClick={onLoadSafe} disabled={!selectedSafe}>
           Load Safe
         </Button>
-        <Button colorScheme="blue" isFullWidth onClick={onCreateSafe}>
+        <Button colorScheme="blue"  onClick={onCreateSafe}>
           Create Safe
         </Button>
-        <Button colorScheme="gray" isFullWidth onClick={getSafesWithoutModule}>
+        <Button colorScheme="gray"  onClick={getSafesWithoutModule}>
           Disabled Module Safe List
         </Button>
       </VStack>

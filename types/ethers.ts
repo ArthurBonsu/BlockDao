@@ -1,6 +1,6 @@
 import { ExecOptionsWithStringEncoding } from "child_process"
 import TXRejectedError from "ganache-core/lib/utils/txrejectederror"
-import { Tx } from "web3/eth/types"
+import { Transaction } from "web3-eth/types"
 
 export interface Asset {
   symbol: string

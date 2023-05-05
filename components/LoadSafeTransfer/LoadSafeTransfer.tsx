@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react'
 
 // Load transfer for safe transactions here 
 interface ExecuteTransferProps {
+  colorScheme?: string
+  variant?: string 
+  isDisabled?: boolean
   safeTxHash: string
   safeRejectTxHash: string | null
   threshold: string | number | undefined

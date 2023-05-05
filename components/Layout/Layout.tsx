@@ -57,7 +57,7 @@ const Layout: FC<LayoutProps> = ({ children, title }) => {
           >
             <div>
               <IconButton
-                d="flex"
+              colorScheme='teal'
                 hidden // hidden for the mean time
                 mr={4}
                 transform="scaleX(-1)"

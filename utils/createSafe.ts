@@ -40,11 +40,11 @@ export const createSafe = async (   threshold:number , extrauseraddreess?: strin
   ownersigner = owners[0];
   // For signer (Signer)
   givensigner = hre.ethers.getSigners(0)
- 
+  const owner = provider.getSigner(0)
   
   ethAdapter = new EthersAdapter({
     ethers,
-    signer: givensigner
+    signerOrProvider: owner
   })
 
 // ethAdapter

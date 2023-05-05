@@ -41,6 +41,7 @@ export const Create: WithPageLayout = () => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'address',
+  
   })
 
   const submit = async ({ address, treshold }: formData) => {
@@ -61,25 +62,37 @@ export const Create: WithPageLayout = () => {
             gap: '20px',
           }}
         >
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text>Owners</Text>
-            <Button bg="blue.200" _hover={{ bg: 'blue.300' }} textColor="white" onClick={() => append({})}>
-              Add
-            </Button>
-          </Flex>
-          
+         
           <form onSubmit={handleSubmit(submit)}>
             {Boolean(fields.length === 0) && <Text>Please add owners..</Text>}
             {fields.map((field, index) => (
-              <InputGroup key={field.id} size="sm">
-                <Input {...register(`address.${index}.value`, { required: true })} mb="5px" bg="white" />
+            
+            <>
+            <InputGroup key={field.id} size="sm">
+                <Input {...register(`address.${index}.value`,  { required: true })} mb="5px" bg="white" />
                 <InputRightAddon>
                   <Text onClick={() => remove(index)} _hover={{ cursor: 'pointer' }}>
                     Remove
                   </Text>
                 </InputRightAddon>
               </InputGroup>
-            ))}
+
+
+              <Flex justifyContent="space-between" alignItems="center">
+            <Text>Address  </Text>
+            <Button bg="blue.200" _hover={{ bg: 'blue.300' }} textColor="white" onClick={() =>{ 
+               append({value:'append'});
+           }}>
+              Add
+            </Button>
+          </Flex>
+          
+              </>
+            ))
+            
+            
+            
+            }
             <Flex flexDirection="column" mt="20px">
               <FormControl>
                 <FormLabel htmlFor="amount" fontWeight="normal">

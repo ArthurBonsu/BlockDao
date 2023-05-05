@@ -10,6 +10,9 @@ import { useEffect, useState } from 'react'
 
 
 interface ExecuteTransferProps  {
+  colorScheme?: string
+  variant?: string 
+  isDisabled?:  boolean
   safeTxHash: string
   safeRejectTxHash: string | null
   threshold: string | number | undefined
@@ -64,6 +67,7 @@ const DAO: React.FC<ExecuteTransferProps> = ({
       <Button {...rest} onClick={localDisclosure.onOpen}>
         Execute
       </Button>
+
       <AppModal disclosure={localDisclosure} title="Execute Transaction" modalSize="sm">
         <Flex justify="space-between" py={6} alignItems="center" flexDirection="row">
           {isApprovalExecutable && (

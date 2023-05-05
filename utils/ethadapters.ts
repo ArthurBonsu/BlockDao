@@ -9,7 +9,7 @@ export const ethAdaptername = async () => {
     
    const ethAdapter = new EthersAdapter({
         ethers,
-        signer: owner
+        signerOrProvider: owner
       })
       return {
         ethAdapter
