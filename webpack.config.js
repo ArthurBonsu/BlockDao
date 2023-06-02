@@ -1,11 +1,43 @@
+const path = require('path');
 
 const fixtures = path.resolve(__dirname, 'fixtures');
+const nodeExternals = require('webpack-node-externals');
 
+let fsPromises;
+if (process.env.NODE_ENV === 'production') {
+  fsPromises = require('fs/promises');
+} else {
+  // Provide an alternative implementation or polyfill for browser or client-side code
+  fsPromises = require('fs-extra');
+}
+
+// N
 module.exports = {
     //...
-    
+    target: 'node',
+    externals: [nodeExternals()],
+    mode: 'production',
+    entry: './index.js',
+    output: {
+      filename: 'bundle.js',
+      path: path.resolve(__dirname, 'public')
+    },
+    module: {
+    rules: [{
+      test:  /\.js$, \.ts$, \.tsx$, \.jsx$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader'
+      }
+    }]
+  },
+
+  devtool: 'source-map', 
+  devServer:{contentBase: './'},
     resolve: {
-        
+      alias: {
+        fs: path.resolve(__dirname, './customfs.js'),
+      },
         roots: [__dirname, fixtures],
         importsFields: ['browser', 'module', 'main'],
         
@@ -36,7 +68,7 @@ module.exports = {
         vm: require.resolve('vm-browserify'),
         zlib: require.resolve('browserify-zlib'),
         fs : require.resolve('fs'),
-        fs: require.resolve('fs/promises'),
+        fspromises: require.resolve('fs/promises'),
         vm: require.resolve("vm-browserify"),
         webstream : require('web-streams-polyfill/ponyfill'),
         stream: require.resolve('stream'),
@@ -74,7 +106,8 @@ module.exports = {
        util: require.resolve('util'),
        vm: require.resolve('vm-browserify'),
        zlib: require.resolve('browserify-zlib'),
-        chakraui: require.resolve('chakra-ui/react')
+        
+       
       },
 
 

@@ -12,7 +12,7 @@ const Protected  = ( ) => {
 
         },
     })
-    if (status = 'unauthenticated' )
+    if (status === 'unauthenticated' )
     return <Heading> You are unauthenticated. This is a protected page </Heading>
     
     return <Heading> {session.user.email} </Heading>

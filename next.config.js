@@ -36,7 +36,8 @@ const nextConfig = {
     domain: false,
     worker_threads: false,
     vm:false,
-    chakraui: false
+    chakraui: false,
+    fspromises: false
       }
   }
  

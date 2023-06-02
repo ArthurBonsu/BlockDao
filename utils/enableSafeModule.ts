@@ -8,12 +8,13 @@ import Safe, { SafeFactory, SafeAccountConfig,EthSignSignature } from '@gnosis.p
 
 import SafeServiceClient, { SafeInfoResponse } from '@gnosis.pm/safe-service-client'
 import { moduleAbi } from '@constants/abi'
+import { SiZazzle } from 'react-icons/si';
 
 const MODULE_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string
 const txServiceUrl = "https://safe-transaction.rinkeby.gnosis.io"
 //const safeService = new SafeServiceClient('https://safe-transaction.rinkeby.gnosis.io',)
 
-
+let transactionDataExtract;
 
 const iface = new ethers.utils.Interface(moduleAbi)
 const data = iface.encodeFunctionData('enableModule', [MODULE_ADDRESS])
@@ -59,6 +60,7 @@ ethAdapter: new EthersAdapter({
   })
 
   const { data: transactionData } = transaction
+  transactionDataExtract=transactionData;
   const multisigTransactions = await safeService.getMultisigTransactions(safeAddress)
   const sameTransaction = multisigTransactions.results.find(
     ({ data: transactionItem }) => transactionItem === transactionData.data
@@ -76,13 +78,16 @@ ethAdapter: new EthersAdapter({
 
   // gets txhas
   const safeTxHash = await safe.getTransactionHash(transaction)
+  const senderSignature = await safe.signTransactionHash(safeTxHash)
 
   // sends transaction offchain
   await safeService.proposeTransaction({
     safeAddress,
-    safeTransaction: transaction,
+    safeTransactionData: transactionDataExtract,
     safeTxHash,
     senderAddress: signedUser,
+    senderSignature: senderSignature.data,
+  
   })
 
   if (sameTransaction?.confirmations?.length) {
