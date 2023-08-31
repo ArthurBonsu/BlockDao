@@ -10,7 +10,7 @@ let  chaiaspromised =require ("chai-as-promised");
 let  { Wallet } =require  ("ethers");
 let  assert =require('assert');
 let { networkConfig, getNetworkIdFromName } =require ("../utils/gethardhatconfig.js");
-const fs = require('fs')
+const fs = require('node:fs/promises')
 chai.use(require('chai-bignumber')());
 //We import helpers from providers
 let {
@@ -75,8 +75,24 @@ const RINKEBY_MNEUMONIC=process.env.RINKEBY_MNEUMONIC;
 let networkName;
 let chainId; let tx;
 // We call on the deployment environment
+if (typeof window !== 'undefined') {
 
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
 
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
+
+}
 export const UpgradeFunc = async  (hre)=> { 
 const {deployments, getNamedAccounts,getChainId} = hre; // we get the deployments and getNamedAccounts which are provided by hardhat-deploy
 const {deploy} = deployments; // the deployments field itself contains the deploy function

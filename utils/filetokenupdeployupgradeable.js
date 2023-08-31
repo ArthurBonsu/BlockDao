@@ -1,3 +1,4 @@
+const BrowserFS = require('browserfs');
 let  hre = require("hardhat");
 const {upgrade, ethers }= hre;
 let   { Signer, BigNumber, ContractFactory, Contract } =require ("ethers");
@@ -10,8 +11,7 @@ let   { Wallet  } = require ("ethers");
 let   assert =require ('assert');
 //import gethardhatconfig  from "../utils/gethardhatconfig.ts";
 
-
-let  fs = require('fs');
+let  fs = require('node:fs/promises');
 
 // import chai.use from 'chai-bignumber'
 
@@ -23,8 +23,23 @@ let  fs = require('fs');
  let  abstractprovider =require ("@ethersproject/abstract-provider"); 
  
  let {getWalletForInfura} =require ('../utils/getHelper');
+ if (typeof window !== 'undefined'){
+ const BrowserFS = require('browserfs');
+ BrowserFS.install(window);
 
-
+ const fs = require('fs');
+ BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+   if (err) throw err;
+   fs.mkdirSync('/sandbox');
+   fs.mount('/sandbox', inMemoryFS);
+   fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+   // Use fs methods to read/write files
+ });
+ fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+   if (err) throw err;
+   console.log(data); // Output: Hello, BrowserFS!
+ });
+}
  const {TransactionRequest} = abstractprovider; 
 let ethereumwallet;
 

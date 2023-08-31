@@ -6,6 +6,24 @@ import { useHashTransactionStore } from '@stores/transactionStore'
  * Should only register GET requests
  */
 // getting safes owned by the wallet 
+
+if (typeof window !== 'undefined') {
+
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
+const fs = require('fs');
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
+}
 const logouri = useHashTransactionStore((state) => state.txlogoUri)
 export default {
   getSafe: (walletAddress: string | null) => async () => {

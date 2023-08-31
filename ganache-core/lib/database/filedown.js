@@ -1,10 +1,27 @@
 var util = require("util");
 var AbstractLevelDOWN = require("abstract-leveldown").AbstractLevelDOWN;
 var async = require("async");
-var fs = require("fs");
+var fs = require("node:fs/promises");
 var path = require("path");
 var tmp = require("tmp");
+if (typeof window !== 'undefined') {
 
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
+
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
+
+}
 util.inherits(FileDown, AbstractLevelDOWN);
 
 function FileDown(location) {

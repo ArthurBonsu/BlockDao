@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('node:fs/promises')
 const chalk = require('chalk')
 const path = require('path')
 const _groupBy = require('lodash').groupBy
@@ -7,12 +7,26 @@ const { issueTypes } = require('./commitizen')
 const CHANGELOG_DIRECTORY = path.join(__dirname, '..')
 const department = process.argv[2] // web | api | android | ios | infra
 const jiraDomain = process.argv[3] // 'https://identifi.atlassian.net'
+if (typeof window !== 'undefined') {
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
 
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
 if (!department || !jiraDomain) {
   console.log(chalk.red('Usage: node scripts/changelog.js <department> <jira-domain>'))
   process.exit(1)
 }
-
+}
 const DEPARTMENT_CONFIG = {
   tagPrefix: department,
   commitRegex: new RegExp(`^${department}\/[A-Z]+-[0-9]+`, 'gm'),

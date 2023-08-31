@@ -1,6 +1,23 @@
 import { useEffect, useState } from "react";
 import { ImportMeta } from "types/index";
+ const fs = require('fs');
+if (typeof window !== 'undefined') {
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
 
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
+
+}
  let GIFFYAPIKEY: ImportMeta; 
 GIFFYAPIKEY.env.APIKEY ="";
 const useFetch = ({ keyword }) => {

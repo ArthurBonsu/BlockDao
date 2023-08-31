@@ -13,7 +13,7 @@ let  { Wallet } =require  ("ethers");
 let  assert =require('assert');
 
 let { networkConfig, getNetworkIdFromName } =require ("../utils/helper-hardhat-config");
-const fs = require('fs')
+const fs = require('node:fs/promises')
 
 
 chai.use(require('chai-bignumber')());
@@ -64,6 +64,21 @@ getWalletForInfura
 } = require("../utils/helpers");
 let  { TransactionRequest } = require("@ethersproject/abstract-provider");
 let ethereumwallet;
+
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
+
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
 const  ROPSTEN_NETWORK = process.env.ROPSTEN_NETWORK;
 const ROPSTEN_API = process.env.ROPSTEN_API;
 

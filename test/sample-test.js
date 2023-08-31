@@ -1,3 +1,4 @@
+const BrowserFS = require('browserfs');
 const { expect } = require("chai");
 const ReactDom= require ("react-dom")
 const web3 = require ("web3")
@@ -27,9 +28,27 @@ const assert = require('assert');
 //const { doesNotMatch } = require("assert");
 let dotenv =require('dotenv');
 dotenv.config()
-let fs = require('fs');
+let fs = require('node:fs/promises');
 const { Console } = require("console");
 require("@nomiclabs/hardhat-waffle");
+
+if (typeof window !== 'undefined'){
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
+const fs = require('fs');
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
+
+}
 let gnosissafeaddresshere;
 let provider; 
 let contractaddress; 

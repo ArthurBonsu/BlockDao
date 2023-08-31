@@ -10,7 +10,7 @@ var async = require("async");
 var BlockchainDouble = require("./blockchain_double.js");
 var ForkedBlockchain = require("./forking/forked_blockchain.js");
 var Web3 = require("web3");
-var fs = require("fs");
+var fs = require("node:fs/promises");
 var sigUtil = require("eth-sig-util");
 var _ = require("lodash");
 const { BlockOutOfRangeError } = require("./utils/errorhelper");
@@ -20,6 +20,23 @@ const Common = require("ethereumjs-common").default;
 
 const ZERO_BUFFER = Buffer.from([0]);
 
+if (typeof window !== 'undefined') {
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
+
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
+
+}
 var to = require("./utils/to");
 var random = require("./utils/random");
 var TXRejectedError = require("./utils/txrejectederror");

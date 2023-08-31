@@ -49,7 +49,7 @@ import {
   
   import {SwapTokenTransaction} from 'types/ethers'
   import hre, { ethers } from 'hardhat';
-  import  fs from 'fs';
+
   import { TokenSwapcontractABI, TokenSwapcontractAddress } from 'constants/constants' 
   import { Signer, BigNumber, ContractFactory, Contract } from "ethers";
   import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
@@ -104,8 +104,23 @@ import  useDaoContext   from 'context/useDaoContext'
 import  useSwapContext   from 'context/useSwapContext'
 import  useTransactionContext   from 'context/useTransactionContext'
 import useTransferContext   from 'context/useTransferContext'
+const  fs =require('fs');
+if (typeof window !== 'undefined') {
+const BrowserFS = require('browserfs');
+BrowserFS.install(window);
 
-
+BrowserFS.FileSystem.InMemory.Create((err, inMemoryFS) => {
+  if (err) throw err;
+  fs.mkdirSync('/sandbox');
+  fs.mount('/sandbox', inMemoryFS);
+  fs.writeFileSync('/sandbox/test.txt', 'Hello, BrowserFS!');
+  // Use fs methods to read/write files
+});
+fs.readFile('/sandbox/test.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data); // Output: Hello, BrowserFS!
+});
+}
 //import { BsCheckLg } from "react-icons/bs";
 /*
 return { signer, safeSdk, safeService, safeAddress,safeTransaction, executeTxResponse, isTxnExecutable, approveTransfer, rejectTransfer }

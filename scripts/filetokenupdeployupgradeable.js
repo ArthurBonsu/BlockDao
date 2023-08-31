@@ -9,11 +9,12 @@ let   { Wallet  } = require ("ethers");
 
 let   assert =require ('assert');
 //import gethardhatconfig  from "../utils/gethardhatconfig.ts";
-let  fs = require('fs');
+let  fs = require('node:fs/promises');
 // import chai.use from 'chai-bignumber'
 // Adding Provider to the deployment 
 //We call helper from deployment
 
+if (typeof window !== 'undefined') {
 
  let  abstractprovider =require ("@ethersproject/abstract-provider"); 
  
@@ -60,5 +61,5 @@ async function main () {
 }
 
 main();
-
+}
 module.exports
