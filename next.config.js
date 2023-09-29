@@ -1,86 +1,104 @@
-const path = require('path');
-const webpack = require('webpack');
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  
+  webpack: (
+    config,
+    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
+  ) => {
 
-module.exports = {
-  webpack: (config, { isServer }) => {
-    config.resolve.alias['fs'] = path.resolve(__dirname, 'node_modules/fs-extra');
-    
     if (!isServer) {
-      // For the client, provide a fallback mechanism
+      // don't resolve 'fs' module on the client to prevent this error on build --> Error: Can't resolve 'fs'
       config.resolve.fallback = {
+  
         fs: false,
-        path: false,
-        os: false,
-        https: false,
-        http: false,
-        crypto: false,
-        stream: false,
-        net: false,
-        tls: false,
-        constants: false,
-        zlib: false,
-        child_process: false,
-        console: false,
-        async_hooks: false,
-        ethereum_waffle: false,
-        stream_web: false,
-        util_types: false,
-        fs_promises: false,
-        querystring: false,
-        util: false,
-        webstream: false,
-        perf_hooks: false,
-        worker_threads: false,
-        vm: false,
-        chakraui: false,
-        fspromises: false,
-      };
-    } else {
-      // For the server, use your existing server-side configuration
-      // ...
+    path: false,
+    os: false,
+    https: false,
+    http: false,
+    crypto: false,
+    stream: false,
+    net: false,
+    tls: false,
+    constants: false,
+    zlib: false,
+    child_process: false,
+    console: false,
+    async_hooks: false,
+    ethereum_waffle: false,
+    stream_web: false,
+    util_types: false,
+    fs_promises: false,
+    querystring: false,
+    util: false,
+    fs_promises: false,
+    stream_web: false,
+    querystring_es3: false,
+    domain: false,
+    worker_threads: false,
+    vm:false,
+    chakraui: false,
+    fspromises: false
+      }
+  }
+ 
+     config.resolve.fallback ={fs:false};
+   
+     config.resolve.fallback ={domain:false};
+     config.resolve.fallback ={querystring:false};
+     config.resolve.fallback ={fs:false};
+     config.resolve.fallback ={domain:false};
+     config.resolve.fallback ={stream:false};
+     config.resolve.fallback ={util:false};
+     config.resolve.fallback ={webstream:false};
+     config.resolve.fallback={perf_hooks:false};
+     config.resolve.fallback={worker_threads:false};
+     config.resolve.fallback={util_types:false};
+     config.resolve.fallback={vm:false};
+     config.resolve.fallback={path:false};
+     config.resolve.fallback={os:false};
+     config.resolve.fallback={chakraui:false};
+     config.resolve.fallback = {
+      url: require.resolve("url"),
+      fs: require.resolve("graceful-fs"),
+      buffer: require.resolve("buffer"),
+      stream: require.resolve("stream-browserify"),
+  };
 
-      // Add undici and axios to the externals for server-side rendering
-      config.externals.push(
-        'undici',
-        'axios'
-      );
+  
+     config.plugins = (config.plugins || []).concat([
+      new webpack.ProvidePlugin({
+        process: "process/browser",
+        Buffer: ["buffer", "Buffer"],
+      }),
 
-      // Polyfill global objects like `process` and `Buffer` for Node.js modules
-      config.plugins.push(
-        new webpack.ProvidePlugin({
-          process: "process/browser",
-          Buffer: ["buffer", "Buffer"],
-        }),
-        new NodePolyfillPlugin()
-      );
-    }
-    
-    // ... other webpack configuration
 
-    // NormalModuleReplacementPlugin
-    config.plugins.push(
-      new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
-        const mod = resource.request.replace(/^node:/, "");
-        switch (mod) {
+    ]);
+
+
+    new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
+      const mod = resource.request.replace(/^node:/, "");
+      switch (mod) {
           case "buffer":
-            resource.request = "buffer";
-            break;
+              resource.request = "buffer";
+              break;
           case "stream":
-            resource.request = "readable-stream";
-            break;
+              resource.request = "readable-stream";
+              break;
           default:
-            throw new Error(`Not found ${mod}`);
-        }
-      })
-    );
+              throw new Error(`Not found ${mod}`);
+      }
+  }),
 
-    config.ignoreWarnings = [/Failed to parse source map/];
+config.ignoreWarnings = [/Failed to parse source map/];
 
-    return config;
+
+    
+    return config
   },
   reactStrictMode: true,
 
-  // ... other Next.js configuration
 
-};
+
+}
+
+module.exports = nextConfig
